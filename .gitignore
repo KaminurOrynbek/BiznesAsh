@@ -1,0 +1,14 @@
+# Ignore Go build files
+/bin/
+/vendor/
+/*.exe
+/*.exe~
+/*.dll
+/*.so
+/*.dylib
+/*.test
+*.out
+
+# Ignore generated files
+**/auto-proto/*
+proto/gen/*
