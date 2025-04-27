@@ -1,3 +1,6 @@
+
+.idea/
+
 # Ignore Go build files
 /bin/
 /vendor/
@@ -12,3 +15,5 @@
 # Ignore generated files
 **/auto-proto/*
 proto/gen/*
+
+
