@@ -1,54 +1,36 @@
-package config
+package posgres
 
 import (
 	"fmt"
-	"log"
 	"os"
 )
 
+// Config holds the configuration values for the application
 type Config struct {
+	JWTSecret  string
 	DBHost     string
 	DBPort     string
 	DBUser     string
 	DBPassword string
 	DBName     string
 	GRPCPort   string
-	JWTSecret  string
-	RedisURL   string
 }
 
-func (c *Config) DSN() string {
-	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		c.DBHost, c.DBPort, c.DBUser, c.DBPassword, c.DBName)
-}
-
+// LoadConfig loads the configuration from environment variables
 func LoadConfig() *Config {
-	dbHost := getEnv("DB_HOST", "localhost")
-	dbPort := getEnv("DB_PORT", "5432")
-	dbUser := getEnv("DB_USER", "postgres")
-	dbPassword := getEnv("DB_PASSWORD", "0000")
-	dbName := getEnv("DB_NAME", "user_service")
-	grpcPort := getEnv("GRPC_PORT", "50051")
-	jwtSecret := getEnv("JWT_SECRET", "your_jwt_secret_key_very_long_and_secure_string")
-	redisURL := getEnv("REDIS_URL", "localhost:6379")
-
 	return &Config{
-		DBHost:     dbHost,
-		DBPort:     dbPort,
-		DBUser:     dbUser,
-		DBPassword: dbPassword,
-		DBName:     dbName,
-		GRPCPort:   grpcPort,
-		JWTSecret:  jwtSecret,
-		RedisURL:   redisURL,
+		JWTSecret:  os.Getenv("JWT_SECRET"),
+		DBHost:     os.Getenv("DB_HOST"),
+		DBPort:     os.Getenv("DB_PORT"),
+		DBUser:     os.Getenv("DB_USER"),
+		DBPassword: os.Getenv("DB_PASSWORD"),
+		DBName:     os.Getenv("DB_NAME"),
+		GRPCPort:   os.Getenv("GRPC_PORT"),
 	}
 }
 
-func getEnv(key, defaultValue string) string {
-	value, exists := os.LookupEnv(key)
-	if !exists {
-		log.Printf("Environment variable %s not set, using default: %s", key, defaultValue)
-		return defaultValue
-	}
-	return value
+// GetDBURL combines the DB configuration values into a single connection string
+func (c *Config) GetDBURL() string {
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		c.DBUser, c.DBPassword, c.DBHost, c.DBPort, c.DBName)
 }
