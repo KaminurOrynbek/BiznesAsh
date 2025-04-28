@@ -1,0 +1,116 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "UserService/auto-proto";
+
+service UserService {
+  // Аутентификация
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Authorize(TokenRequest) returns (AuthorizationResponse);
+
+  // Работа с профилем
+  rpc GetCurrentUser(Empty) returns (UserResponse);
+  rpc GetUser(GetUserRequest) returns (UserResponse);
+  rpc UpdateProfile(UpdateProfileRequest) returns (UserResponse);
+
+  // Работа с ролями
+  rpc PromoteToModerator(RoleChangeRequest) returns (RoleChangeResponse);
+  rpc PromoteToAdmin(RoleChangeRequest) returns (RoleChangeResponse);
+  rpc DemoteToUser(RoleChangeRequest) returns (RoleChangeResponse);
+
+  // Удаление аккаунта
+  rpc DeleteAccount(UserID) returns (DeleteResponse);
+
+  // Получение списка пользователей
+  rpc ListUsers(ListUsersRequest) returns (UsersListResponse);
+
+  // Блокировка пользователя
+  rpc BanUser(UserID) returns (BanUserResponse);
+}
+
+// Сообщения для запросов и ответов
+
+message RegisterRequest {
+  string email = 1;
+  string username = 2;
+  string password = 3;
+}
+
+message RegisterResponse {
+  string userId = 1;
+  string username = 2;
+  string email = 3;
+  string role = 4;
+  string token = 5;  // Токен для авторизации
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message TokenRequest {
+  string token = 1;
+}
+
+message UpdateProfileRequest {
+  string username = 1;
+  string bio = 2;
+}
+
+message GetUserRequest {
+  string userId = 1;
+}
+
+message UserID {
+  string userId = 1;
+}
+
+message ListUsersRequest {
+  string searchQuery = 1;
+}
+
+message UserResponse {
+  string userId = 1;
+  string email = 2;
+  string username = 3;
+  string role = 4;
+  string bio = 5;
+}
+
+message UsersListResponse {
+  repeated UserResponse users = 1;
+}
+
+message LoginResponse {
+  string userId = 1;
+  string token = 2;
+}
+
+message AuthorizationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message RoleChangeRequest {
+  string userId = 1;
+}
+
+message RoleChangeResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeleteResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message BanUserResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message Empty {}
