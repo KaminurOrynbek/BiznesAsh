@@ -1,4 +1,4 @@
-package Interfaces
+package Usecase_Interfaces
 
 import (
 	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
