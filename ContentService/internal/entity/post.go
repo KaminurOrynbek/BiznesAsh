@@ -1,19 +1,15 @@
 package entity
 
-import "time"
-
-type PostType string
-
-const (
-	PostTypeLegalInfo PostType = "LEGAL_INFO"
-	PostTypeGuide     PostType = "GUIDE"
+import (
+	"github.com/KaminurOrynbek/BiznesAsh/internal/entity/enum"
+	"time"
 )
 
 type Post struct {
 	ID            string
 	Title         string
 	Content       string
-	Type          PostType
+	Type          enum.PostType
 	AuthorID      string
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
