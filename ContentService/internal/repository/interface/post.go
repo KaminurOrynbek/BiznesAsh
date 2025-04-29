@@ -10,6 +10,6 @@ type PostRepository interface {
 	Update(ctx context.Context, post *entity.Post) error
 	Delete(ctx context.Context, id string) error
 	GetByID(ctx context.Context, id string) (*entity.Post, error)
-	List(ctx context.Context) ([]*entity.Post, error)
-	Search(ctx context.Context, keyword string) ([]*entity.Post, error)
+	List(ctx context.Context, offset, limit int) ([]*entity.Post, error)
+	Search(ctx context.Context, keyword string, offset, limit int) ([]*entity.Post, error)
 }

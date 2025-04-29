@@ -83,15 +83,15 @@ func (r *postRepositoryImpl) List(ctx context.Context, offset, limit int) ([]*en
 	return posts, err
 }
 
-func (r *postRepositoryImpl) Search(ctx context.Context, keyword string, offset, limit int) ([]*entity.Post, error) {
+func (r *postRepositoryImpl) Search(ctx context.Context, keyword string) ([]*entity.Post, error) {
 	query := `
 		SELECT id, title, content, type, author_id, created_at, updated_at, published, likes_count, dislikes_count
 		FROM posts
 		WHERE title ILIKE '%' || $1 || '%' OR content ILIKE '%' || $1 || '%'
 		ORDER BY created_at DESC
-		OFFSET $2 LIMIT $3
+		LIMIT 100
 	`
 	var posts []*entity.Post
-	err := r.db.SelectContext(ctx, &posts, query, keyword, offset, limit)
+	err := r.db.SelectContext(ctx, &posts, query, keyword)
 	return posts, err
 }
