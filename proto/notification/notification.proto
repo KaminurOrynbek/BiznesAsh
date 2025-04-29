@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package notification;
+
+option go_package = "github.com/KaminurOrynbek/BiznesAsh/NotificationService/auto-proto";
+
+service NotificationService {
+  rpc SendWelcomeEmail(EmailRequest) returns (NotificationResponse);
+  rpc SendCommentNotification(CommentNotification) returns (NotificationResponse);
+  rpc SendReportNotification(ReportNotification) returns (NotificationResponse);
+  rpc NotifyNewPost(NewPostNotification) returns (NotificationResponse);
+  rpc NotifyPostUpdate(PostUpdateNotification) returns (NotificationResponse);
+  rpc SendVerificationEmail(EmailRequest) returns (NotificationResponse);
+  rpc VerifyEmail(VerificationCode) returns (NotificationResponse);
+  rpc NotifySystemMessage(SystemMessageRequest) returns (NotificationResponse);
+  rpc SubscribeToUpdates(UserID) returns (NotificationResponse);
+  rpc UnsubscribeFromUpdates(UserID) returns (NotificationResponse);
+  rpc GetSubscriptions(UserID) returns (SubscriptionsResponse);
+  rpc ResendVerificationCode(UserID) returns (NotificationResponse);
+}
+
+message EmailRequest {
+  string email = 1;
+  string subject = 2;
+  string body = 3;
+}
+
+message CommentNotification {
+  string email = 1;
+  string postId = 2;
+  string commentText = 3;
+}
+
+message ReportNotification {
+  string email = 1;
+  string postId = 2;
+  string reason = 3;
+}
+
+message NewPostNotification {
+  string email = 1;
+  string postTitle = 2;
+}
+
+message PostUpdateNotification {
+  string email = 1;
+  string postId = 2;
+  string updateSummary = 3;
+}
+
+message VerificationCode {
+  string email = 1;
+  string code = 2;
+}
+
+message SystemMessageRequest {
+  string email = 1;
+  string message = 2;
+}
+
+message UserID {
+  string userId = 1;
+}
+
+message NotificationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message SubscriptionsResponse {
+  repeated string subscriptions = 1;
+}
