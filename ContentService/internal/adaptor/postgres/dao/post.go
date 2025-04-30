@@ -19,5 +19,5 @@ type Post struct {
 }
 
 func (Post) TableName() string {
-	return "post"
+	return "posts"
 }
