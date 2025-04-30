@@ -16,6 +16,7 @@ type Post struct {
 	Published     bool          `db:"published"`
 	LikesCount    int32         `db:"likes_count"`
 	DislikesCount int32         `db:"dislikes_count"`
+	CommentsCount int32         `db:"comments_count"`
 }
 
 func (Post) TableName() string {
