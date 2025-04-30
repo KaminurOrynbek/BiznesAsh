@@ -18,6 +18,7 @@ type Post struct {
 	LikesCount    int32         `db:"likes_count"`
 	DislikesCount int32         `db:"dislikes_count"`
 	CommentsCount int32         `db:"comments_count"`
+	Comments      []*Comment
 }
 
 func (Post) TableName() string {
@@ -25,6 +26,11 @@ func (Post) TableName() string {
 }
 
 func (p *Post) ToEntity() *entity.Post {
+	var entityComments []entity.Comment
+	for _, c := range p.Comments {
+		entityComments = append(entityComments, *c.ToEntity())
+	}
+
 	return &entity.Post{
 		ID:            p.ID,
 		Title:         p.Title,
@@ -37,6 +43,7 @@ func (p *Post) ToEntity() *entity.Post {
 		LikesCount:    p.LikesCount,
 		DislikesCount: p.DislikesCount,
 		CommentsCount: p.CommentsCount,
+		Comments:      entityComments,
 	}
 }
 

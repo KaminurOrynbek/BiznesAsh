@@ -51,10 +51,22 @@ func (dao *PostDAO) GetByID(ctx context.Context, id string) (*model.Post, error)
 		WHERE id = $1
 	`
 	var post model.Post
-	err := dao.db.GetContext(ctx, &post, query, id)
-	if err != nil {
+	if err := dao.db.GetContext(ctx, &post, query, id); err != nil {
 		return nil, err
 	}
+
+	// Manually preload comments
+	commentQuery := `
+		SELECT id, post_id, author_id, content, created_at, updated_at
+		FROM comments
+		WHERE post_id = $1
+	`
+	var comments []*model.Comment
+	if err := dao.db.SelectContext(ctx, &comments, commentQuery, id); err != nil {
+		return nil, err
+	}
+	post.Comments = comments
+
 	return &post, nil
 }
 
