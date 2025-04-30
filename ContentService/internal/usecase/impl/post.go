@@ -73,20 +73,3 @@ func (u *postUsecaseImpl) ListPosts(ctx context.Context, offset, limit int) ([]*
 
 	return posts, nil
 }
-
-func (u *postUsecaseImpl) SearchPosts(ctx context.Context, keyword string, offset, limit int) ([]*entity.Post, error) {
-	posts, err := u.postRepo.Search(ctx, keyword, offset, limit)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, post := range posts {
-		comments, err := u.commentRepo.ListByPostID(ctx, post.ID)
-		if err != nil {
-			continue
-		}
-		post.CommentsCount = int32(len(comments))
-	}
-
-	return posts, nil
-}
