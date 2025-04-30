@@ -1,4 +1,4 @@
-package dto
+package model
 
 import (
 	"time"
@@ -8,12 +8,12 @@ import (
 )
 
 // UserDTO используется для маппинга данных с базой данных
-type UserDTO struct {
+type UserDB struct {
 	ID        string    `db:"id"`
 	Email     string    `db:"email"`
 	Username  string    `db:"username"`
 	Password  string    `db:"password"`
-	Role      string    `db:"role"` // Используем string, так как база данных хранит роль как текст
+	Role      string    `db:"role"`
 	Bio       string    `db:"bio"`
 	Banned    bool      `db:"banned"`
 	CreatedAt time.Time `db:"created_at"`
@@ -21,8 +21,8 @@ type UserDTO struct {
 }
 
 // ToUserDTO конвертирует entity.User в UserDTO
-func ToUserDTO(user *entity.User) *UserDTO {
-	return &UserDTO{
+func ToUserDB(user *entity.User) *UserDB {
+	return &UserDB{
 		ID:        user.ID,
 		Email:     user.Email,
 		Username:  user.Username,
@@ -36,7 +36,7 @@ func ToUserDTO(user *entity.User) *UserDTO {
 }
 
 // ToEntityUser конвертирует UserDTO в entity.User
-func ToEntityUser(dto *UserDTO) *entity.User {
+func ToEntityUser(dto *UserDB) *entity.User {
 	return &entity.User{
 		ID:        dto.ID,
 		Email:     dto.Email,
