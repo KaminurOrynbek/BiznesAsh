@@ -17,12 +17,12 @@ func NewCommentRepository(dao *dao.CommentDAO) _interface.CommentRepository {
 }
 
 func (r *commentRepositoryImpl) Create(ctx context.Context, comment *entity.Comment) error {
-	modelComment := model.EntityToModelComment(comment)
+	modelComment := model.FromEntityComment(comment)
 	return r.dao.Create(ctx, modelComment)
 }
 
 func (r *commentRepositoryImpl) Update(ctx context.Context, comment *entity.Comment) error {
-	modelComment := model.EntityToModelComment(comment)
+	modelComment := model.FromEntityComment(comment)
 	return r.dao.Update(ctx, modelComment)
 }
 
@@ -38,7 +38,7 @@ func (r *commentRepositoryImpl) ListByPostID(ctx context.Context, postID string)
 
 	var entityComments []*entity.Comment
 	for _, m := range modelComments {
-		entityComments = append(entityComments, model.ModelToEntityComment(m))
+		entityComments = append(entityComments, m.ToEntity())
 	}
 	return entityComments, nil
 }
