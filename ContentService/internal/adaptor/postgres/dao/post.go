@@ -16,8 +16,8 @@ func NewPostDAO(db *sqlx.DB) *PostDAO {
 
 func (dao *PostDAO) Create(ctx context.Context, post *model.Post) error {
 	query := `
-		INSERT INTO posts (id, title, content, type, author_id, created_at, updated_at, published, likes_count, dislikes_count)
-		VALUES (:id, :title, :content, :type, :author_id, :created_at, :updated_at, :published, :likes_count, :dislikes_count)
+		INSERT INTO posts (id, title, content, type, author_id, created_at, updated_at, published, likes_count, dislikes_count, comments_count)
+		VALUES (:id, :title, :content, :type, :author_id, :created_at, :updated_at, :published, :likes_count, :dislikes_count, :comments_count)
 	`
 	_, err := dao.db.NamedExecContext(ctx, query, post)
 	return err
@@ -30,7 +30,8 @@ func (dao *PostDAO) Update(ctx context.Context, post *model.Post) error {
 			content = :content, 
 			type = :type, 
 			updated_at = :updated_at, 
-			published = :published 
+			published = :published,
+			comments_count = :comments_count
 		WHERE id = :id
 	`
 	_, err := dao.db.NamedExecContext(ctx, query, post)
@@ -45,7 +46,7 @@ func (dao *PostDAO) Delete(ctx context.Context, postID string) error {
 
 func (dao *PostDAO) GetByID(ctx context.Context, id string) (*model.Post, error) {
 	query := `
-		SELECT id, title, content, type, author_id, created_at, updated_at, published, likes_count, dislikes_count
+		SELECT id, title, content, type, author_id, created_at, updated_at, published, likes_count, dislikes_count, comments_count
 		FROM posts
 		WHERE id = $1
 	`
@@ -59,7 +60,7 @@ func (dao *PostDAO) GetByID(ctx context.Context, id string) (*model.Post, error)
 
 func (dao *PostDAO) List(ctx context.Context, offset, limit int) ([]*model.Post, error) {
 	query := `
-		SELECT id, title, content, type, author_id, created_at, updated_at, published, likes_count, dislikes_count
+		SELECT id, title, content, type, author_id, created_at, updated_at, published, likes_count, dislikes_count, comments_count
 		FROM posts
 		ORDER BY created_at DESC
 		OFFSET $1 LIMIT $2
@@ -71,7 +72,7 @@ func (dao *PostDAO) List(ctx context.Context, offset, limit int) ([]*model.Post,
 
 func (dao *PostDAO) Search(ctx context.Context, keyword string, offset, limit int) ([]*model.Post, error) {
 	query := `
-		SELECT id, title, content, type, author_id, created_at, updated_at, published, likes_count, dislikes_count
+		SELECT id, title, content, type, author_id, created_at, updated_at, published, likes_count, dislikes_count, comments_count
 		FROM posts
 		WHERE title ILIKE '%' || $1 || '%' OR content ILIKE '%' || $1 || '%'
 		ORDER BY created_at DESC
