@@ -12,8 +12,3 @@
 /*.test
 *.out
 
-# Ignore generated files
-**/auto-proto/*
-proto/gen/*
-
-
