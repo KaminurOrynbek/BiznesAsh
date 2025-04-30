@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
+	"time"
+)
 
 type Like struct {
 	ID        string    `db:"id"`
@@ -12,4 +15,23 @@ type Like struct {
 
 func (Like) TableName() string {
 	return "likes"
+}
+
+func (c *Like) ToEntity() *entity.Like {
+	return &entity.Like{
+		ID:        c.ID,
+		PostID:    c.PostID,
+		UserID:    c.UserID,
+		IsLike:    c.IsLike,
+		CreatedAt: c.CreatedAt,
+	}
+}
+
+func FromEntityLike(e *entity.Like) *Like {
+	return &Like{
+		ID:        e.ID,
+		PostID:    e.PostID,
+		UserID:    e.UserID,
+		IsLike:    e.IsLike,
+		CreatedAt: e.CreatedAt}
 }
