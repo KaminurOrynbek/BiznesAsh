@@ -1,6 +1,7 @@
 package model
 
 import (
+	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/entity/enum"
 	"time"
 )
@@ -21,4 +22,36 @@ type Post struct {
 
 func (Post) TableName() string {
 	return "posts"
+}
+
+func (p *Post) ToEntity() *entity.Post {
+	return &entity.Post{
+		ID:            p.ID,
+		Title:         p.Title,
+		Content:       p.Content,
+		Type:          p.Type,
+		AuthorID:      p.AuthorID,
+		CreatedAt:     p.CreatedAt,
+		UpdatedAt:     p.UpdatedAt,
+		Published:     p.Published,
+		LikesCount:    p.LikesCount,
+		DislikesCount: p.DislikesCount,
+		CommentsCount: p.CommentsCount,
+	}
+}
+
+func FromEntity(p *entity.Post) *Post {
+	return &Post{
+		ID:            p.ID,
+		Title:         p.Title,
+		Content:       p.Content,
+		Type:          p.Type,
+		AuthorID:      p.AuthorID,
+		CreatedAt:     p.CreatedAt,
+		UpdatedAt:     p.UpdatedAt,
+		Published:     p.Published,
+		LikesCount:    p.LikesCount,
+		DislikesCount: p.DislikesCount,
+		CommentsCount: p.CommentsCount,
+	}
 }
