@@ -13,7 +13,9 @@
 *.out
 
 # Ignore generated files
-**/auto-proto/*
-proto/gen/*
+#**/auto-proto/*
+#proto/gen/*
 
+# Ignore environment variable files
+.env
 
