@@ -57,9 +57,16 @@ func (s *UserServer) Authorize(ctx context.Context, req *pb.TokenRequest) (*pb.A
 		return nil, status.Errorf(codes.Unauthenticated, "failed to authorize: %v", err)
 	}
 
+	// Extract user_id from context (set by AuthInterceptor)
+	userID, ok := ctx.Value("userId").(string)
+	if !ok {
+		return nil, status.Errorf(codes.Internal, "failed to get user_id from context")
+	}
+
 	return &pb.AuthorizationResponse{
 		Success: success,
 		Message: message,
+		UserId:  userID, // Populate the new field
 	}, nil
 }
 
