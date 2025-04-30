@@ -17,11 +17,11 @@ func NewPostRepository(dao *dao.PostDAO) _interface.PostRepository {
 }
 
 func (r *postRepositoryImpl) Create(ctx context.Context, post *entity.Post) error {
-	return r.dao.Create(ctx, model.FromEntity(post))
+	return r.dao.Create(ctx, model.FromEntityPost(post))
 }
 
 func (r *postRepositoryImpl) Update(ctx context.Context, post *entity.Post) error {
-	return r.dao.Update(ctx, model.FromEntity(post))
+	return r.dao.Update(ctx, model.FromEntityPost(post))
 }
 
 func (r *postRepositoryImpl) Delete(ctx context.Context, id string) error {
