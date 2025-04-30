@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package user;
 
-option go_package = "UserService/auto-proto";
+option go_package = "github.com/KaminurOrynbek/BiznesAsh/UserService/auto-proto";
 
 service UserService {
   // Аутентификация
@@ -92,6 +92,7 @@ message LoginResponse {
 message AuthorizationResponse {
   bool success = 1;
   string message = 2;
+  string user_id = 3;
 }
 
 message RoleChangeRequest {
