@@ -77,7 +77,7 @@ func (h *ContentHandler) GetPost(ctx context.Context, req *pb.PostIdRequest) (*p
 }
 
 func (h *ContentHandler) ListPosts(ctx context.Context, req *pb.ListPostsRequest) (*pb.ListPostsResponse, error) {
-	posts, err := h.postUsecase.ListPosts(ctx)
+	posts, err := h.postUsecase.ListPosts(ctx, int(req.Offset), int(req.Limit))
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +89,7 @@ func (h *ContentHandler) ListPosts(ctx context.Context, req *pb.ListPostsRequest
 }
 
 func (h *ContentHandler) SearchPosts(ctx context.Context, req *pb.SearchPostsRequest) (*pb.ListPostsResponse, error) {
-	posts, err := h.postUsecase.SearchPosts(ctx, req.Query)
+	posts, err := h.postUsecase.SearchPosts(ctx, req.Query, int(req.Offset), int(req.Limit))
 	if err != nil {
 		return nil, err
 	}
