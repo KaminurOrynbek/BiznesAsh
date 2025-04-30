@@ -40,7 +40,7 @@ func (p *Post) ToEntity() *entity.Post {
 	}
 }
 
-func FromEntity(p *entity.Post) *Post {
+func FromEntityPost(p *entity.Post) *Post {
 	return &Post{
 		ID:            p.ID,
 		Title:         p.Title,
