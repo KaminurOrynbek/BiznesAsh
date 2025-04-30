@@ -18,14 +18,14 @@ func (Comment) TableName() string {
 	return "comments"
 }
 
-func (c *Comment) ToEntity() *entity.Comment {
+func (m *Comment) ToEntity() *entity.Comment {
 	return &entity.Comment{
-		ID:        c.ID,
-		PostID:    c.PostID,
-		AuthorID:  c.AuthorID,
-		Content:   c.Content,
-		CreatedAt: c.CreatedAt,
-		UpdatedAt: c.UpdatedAt,
+		ID:        m.ID,
+		PostID:    m.PostID,
+		AuthorID:  m.AuthorID,
+		Content:   m.Content,
+		CreatedAt: m.CreatedAt,
+		UpdatedAt: m.UpdatedAt,
 	}
 }
 

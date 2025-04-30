@@ -33,5 +33,6 @@ func FromEntityLike(e *entity.Like) *Like {
 		PostID:    e.PostID,
 		UserID:    e.UserID,
 		IsLike:    e.IsLike,
-		CreatedAt: e.CreatedAt}
+		CreatedAt: e.CreatedAt,
+	}
 }
