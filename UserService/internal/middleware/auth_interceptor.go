@@ -49,7 +49,7 @@ func AuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServe
 		return nil, status.Errorf(codes.Unauthenticated, "invalid token claims")
 	}
 
-	userID, ok := claims["userId"].(string)
+	userID, ok := claims["user_id"].(string)
 	if !ok {
 		return nil, status.Errorf(codes.Unauthenticated, "missing userId in token")
 	}
