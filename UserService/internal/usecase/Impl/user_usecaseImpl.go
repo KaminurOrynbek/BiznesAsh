@@ -185,25 +185,23 @@ func (u *userUsecaseImpl) DeleteAccount(currentUserID, targetUserID string) erro
 	if err != nil {
 		return errors.Wrap(err, "failed to get current user")
 	}
-	if !currentUser.Role.IsAdmin() && currentUserID != targetUserID {
-		return errors.New("only admins or the user themselves can delete the account")
+	if !currentUser.Role.IsAdmin() {
+		return errors.New("only admins can delete accounts")
 	}
 
 	err = u.userRepo.DeleteUser(context.Background(), targetUserID)
 	if err != nil {
-		return errors.Wrap(err, "failed to delete account")
+		return errors.Wrap(err, "failed to delete user")
 	}
 
 	return nil
 }
 
 func (u *userUsecaseImpl) ListUsers(searchQuery string) ([]*entity.User, error) {
-	filter := RepoInterfaces.UserFilter{
-		Email:    searchQuery,
-		Username: searchQuery,
-		Limit:    100,
-		Offset:   0,
+	filter := entity.UserFilter{
+		SearchQuery: searchQuery,
 	}
+
 	users, err := u.userRepo.ListUsers(context.Background(), filter)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to list users")
@@ -211,8 +209,9 @@ func (u *userUsecaseImpl) ListUsers(searchQuery string) ([]*entity.User, error) 
 	return users, nil
 }
 
-func (u *userUsecaseImpl) BanUser(currentUserID, targetUserID string) error {
-	currentUser, err := u.userRepo.GetUserByID(context.Background(), currentUserID)
+// BanUser sets the 'Banned' status of a user to true.
+func (u *userUsecaseImpl) BanUser(currentUserId string, targetUserId string) error {
+	currentUser, err := u.userRepo.GetUserByID(context.Background(), currentUserId)
 	if err != nil {
 		return errors.Wrap(err, "failed to get current user")
 	}
@@ -220,7 +219,7 @@ func (u *userUsecaseImpl) BanUser(currentUserID, targetUserID string) error {
 		return errors.New("only admins can ban users")
 	}
 
-	targetUser, err := u.userRepo.GetUserByID(context.Background(), targetUserID)
+	targetUser, err := u.userRepo.GetUserByID(context.Background(), targetUserId)
 	if err != nil {
 		return errors.Wrap(err, "failed to get target user")
 	}
@@ -236,10 +235,11 @@ func (u *userUsecaseImpl) BanUser(currentUserID, targetUserID string) error {
 
 func generateToken(userID, role string) (string, error) {
 	claims := jwt.MapClaims{
-		"userId": userID,
-		"role":   role,
-		"exp":    time.Now().Add(time.Hour * 24).Unix(),
+		"user_id": userID,
+		"role":    role,
+		"exp":     time.Now().Add(time.Hour * 24).Unix(),
 	}
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {

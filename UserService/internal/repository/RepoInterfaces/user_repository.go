@@ -22,5 +22,6 @@ type UserRepository interface {
 	GetUserByEmail(ctx context.Context, email string) (*entity.User, error)
 	UpdateUser(ctx context.Context, user *entity.User) error
 	DeleteUser(ctx context.Context, id string) error
-	ListUsers(ctx context.Context, filter UserFilter) ([]*entity.User, error)
+	ListUsers(ctx context.Context, filter entity.UserFilter) ([]*entity.User, error)
+	BanUser(ctx context.Context, id string) error
 }
