@@ -77,7 +77,7 @@ func (h *ContentHandler) GetPost(ctx context.Context, req *pb.PostIdRequest) (*p
 }
 
 func (h *ContentHandler) ListPosts(ctx context.Context, req *pb.ListPostsRequest) (*pb.ListPostsResponse, error) {
-	posts, err := h.postUsecase.ListPosts(ctx)
+	posts, err := h.postUsecase.ListPosts(ctx, int(req.Offset), int(req.Limit))
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +89,7 @@ func (h *ContentHandler) ListPosts(ctx context.Context, req *pb.ListPostsRequest
 }
 
 func (h *ContentHandler) SearchPosts(ctx context.Context, req *pb.SearchPostsRequest) (*pb.ListPostsResponse, error) {
-	posts, err := h.postUsecase.SearchPosts(ctx, req.Query)
+	posts, err := h.postUsecase.SearchPosts(ctx, req.Query, int(req.Offset), int(req.Limit))
 	if err != nil {
 		return nil, err
 	}
@@ -176,6 +176,10 @@ func (h *ContentHandler) DislikePost(ctx context.Context, req *pb.DislikePostReq
 
 // mappers for post and comment
 func convertPostToPB(p *entity.Post) *pb.Post {
+	pbComments := make([]*pb.Comment, 0, len(p.Comments))
+	for _, c := range p.Comments {
+		pbComments = append(pbComments, convertCommentToPB(&c))
+	}
 	return &pb.Post{
 		Id:            p.ID,
 		Title:         p.Title,
@@ -187,6 +191,8 @@ func convertPostToPB(p *entity.Post) *pb.Post {
 		DislikesCount: p.DislikesCount,
 		CreatedAt:     p.CreatedAt.Format(time.RFC3339),
 		UpdatedAt:     p.UpdatedAt.Format(time.RFC3339),
+		CommentsCount: p.CommentsCount,
+		Comments:      pbComments,
 	}
 }
 

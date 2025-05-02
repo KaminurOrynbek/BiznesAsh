@@ -4,37 +4,26 @@ import (
 	"context"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
 	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/repository/interface"
-	ucase "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
-	"github.com/google/uuid"
+	usecase "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
 	"time"
 )
 
 type likeUsecaseImpl struct {
-	repo _interface.LikeRepository
+	likeRepo _interface.LikeRepository
 }
 
-func NewLikeUsecase(repo _interface.LikeRepository) ucase.LikeUsecase {
-	return &likeUsecaseImpl{repo: repo}
+func NewLikeUsecase(likeRepo _interface.LikeRepository) usecase.LikeUsecase {
+	return &likeUsecaseImpl{likeRepo: likeRepo}
 }
 
-func (u *likeUsecaseImpl) LikePost(ctx context.Context, postID string, userID string) error {
-	like := &entity.Like{
-		ID:        uuid.NewString(),
-		PostID:    postID,
-		UserID:    userID,
-		IsLike:    true,
-		CreatedAt: time.Now(),
-	}
-	return u.repo.Like(ctx, like)
+func (u *likeUsecaseImpl) LikePost(ctx context.Context, like *entity.Like) error {
+	like.IsLike = true
+	like.CreatedAt = time.Now()
+	return u.likeRepo.Like(ctx, like)
 }
 
-func (u *likeUsecaseImpl) DislikePost(ctx context.Context, postID string, userID string) error {
-	like := &entity.Like{
-		ID:        uuid.NewString(),
-		PostID:    postID,
-		UserID:    userID,
-		IsLike:    false,
-		CreatedAt: time.Now(),
-	}
-	return u.repo.Dislike(ctx, like)
+func (u *likeUsecaseImpl) DislikePost(ctx context.Context, like *entity.Like) error {
+	like.IsLike = false
+	like.CreatedAt = time.Now()
+	return u.likeRepo.Dislike(ctx, like)
 }

@@ -4,17 +4,21 @@ import (
 	"context"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
 	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/repository/interface"
-	ucase "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
+	usecase "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
 
 	"time"
 )
 
 type postUsecaseImpl struct {
-	postRepo _interface.PostRepository
+	postRepo    _interface.PostRepository
+	commentRepo _interface.CommentRepository
 }
 
-func NewPostUsecase(postRepo _interface.PostRepository) ucase.PostUsecase {
-	return &postUsecaseImpl{postRepo: postRepo}
+func NewPostUsecase(postRepo _interface.PostRepository, commentRepo _interface.CommentRepository) usecase.PostUsecase {
+	return usecase.PostUsecase(&postUsecaseImpl{
+		postRepo:    postRepo,
+		commentRepo: commentRepo,
+	})
 }
 
 func (u *postUsecaseImpl) CreatePost(ctx context.Context, post *entity.Post) error {
@@ -33,14 +37,56 @@ func (u *postUsecaseImpl) DeletePost(ctx context.Context, id string) error {
 }
 
 func (u *postUsecaseImpl) GetPost(ctx context.Context, id string) (*entity.Post, error) {
-	return u.postRepo.GetByID(ctx, id)
+	post, err := u.postRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	comments, err := u.commentRepo.ListByPostID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	var valComments []entity.Comment
+	for _, c := range comments {
+		valComments = append(valComments, *c)
+	}
+	post.Comments = valComments
+
+	post.CommentsCount = int32(len(comments))
+
+	return post, nil
 }
 
-func (u *postUsecaseImpl) ListPosts(ctx context.Context) ([]*entity.Post, error) {
-	// You could later improve it by adding pagination (offset, limit)
-	return u.postRepo.List(ctx, 0, 100)
+func (u *postUsecaseImpl) ListPosts(ctx context.Context, offset, limit int) ([]*entity.Post, error) {
+	posts, err := u.postRepo.List(ctx, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, post := range posts {
+		comments, err := u.commentRepo.ListByPostID(ctx, post.ID)
+		if err != nil {
+			continue
+		}
+		post.CommentsCount = int32(len(comments))
+	}
+
+	return posts, nil
 }
 
-func (u *postUsecaseImpl) SearchPosts(ctx context.Context, keyword string) ([]*entity.Post, error) {
-	return u.postRepo.Search(ctx, keyword, 0, 100)
+func (u *postUsecaseImpl) SearchPosts(ctx context.Context, keyword string, offset, limit int) ([]*entity.Post, error) {
+	posts, err := u.postRepo.Search(ctx, keyword, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, post := range posts {
+		comments, err := u.commentRepo.ListByPostID(ctx, post.ID)
+		if err != nil {
+			continue
+		}
+		post.CommentsCount = int32(len(comments))
+	}
+
+	return posts, nil
 }
