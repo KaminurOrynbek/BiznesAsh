@@ -2,33 +2,38 @@ package impl
 
 import (
 	"context"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/dao"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/model"
 	repo "github.com/KaminurOrynbek/BiznesAsh/internal/repository/interface"
-	"github.com/jmoiron/sqlx"
 )
 
 type subscriptionRepositoryImpl struct {
-	db *sqlx.DB
+	dao *dao.SubscriptionDAO
 }
 
-func NewSubscriptionRepository(db *sqlx.DB) repo.SubscriptionRepository {
-	return &subscriptionRepositoryImpl{db: db}
+func NewSubscriptionRepository(dao *dao.SubscriptionDAO) repo.SubscriptionRepository {
+	return &subscriptionRepositoryImpl{dao: dao}
 }
 
 func (r *subscriptionRepositoryImpl) GetSubscriptions(ctx context.Context, userID string) ([]string, error) {
-	var subscriptions []string
-	query := `SELECT event_type FROM subscriptions WHERE user_id = $1`
-	err := r.db.SelectContext(ctx, &subscriptions, query, userID)
-	return subscriptions, err
+	subs, err := r.dao.List(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	var result []string
+	for _, s := range subs {
+		result = append(result, s.EventType) // Assuming EventTypes is a comma-separated string
+	}
+	return result, nil
 }
 
 func (r *subscriptionRepositoryImpl) AddSubscription(ctx context.Context, userID, eventType string) error {
-	query := `INSERT INTO subscriptions (user_id, event_type) VALUES ($1, $2)`
-	_, err := r.db.ExecContext(ctx, query, userID, eventType)
-	return err
+	return r.dao.Add(ctx, &model.Subscription{
+		UserID:    userID,
+		EventType: eventType,
+	})
 }
 
 func (r *subscriptionRepositoryImpl) RemoveSubscription(ctx context.Context, userID, eventType string) error {
-	query := `DELETE FROM subscriptions WHERE user_id = $1 AND event_type = $2`
-	_, err := r.db.ExecContext(ctx, query, userID, eventType)
-	return err
+	return r.dao.Remove(ctx, userID, eventType)
 }

@@ -3,6 +3,7 @@ package entity
 import "time"
 
 type Verification struct {
+	ID        string
 	UserID    string
 	Email     string
 	Code      string //verification code
