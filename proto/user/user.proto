@@ -10,6 +10,9 @@ service UserService {
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Authorize(TokenRequest) returns (AuthorizationResponse);
 
+  // Аутентификация через OTP код
+  rpc VerifyOtp(VerifyOtpRequest) returns (VerifyOtpResponse);
+
   // Работа с профилем
   rpc GetCurrentUser(Empty) returns (UserResponse);
   rpc GetUser(GetUserRequest) returns (UserResponse);
@@ -115,3 +118,14 @@ message BanUserResponse {
 }
 
 message Empty {}
+
+message VerifyOtpRequest {
+  string userId = 1;
+  string otpCode = 2;
+}
+
+message VerifyOtpResponse {
+  bool success = 1;
+  string message = 2;
+  string token = 3;  // Токен после успешной верификации OTP
+}
