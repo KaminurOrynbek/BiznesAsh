@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS posts (
                                      published BOOLEAN DEFAULT FALSE,
                                      likes_count INTEGER DEFAULT 0,
                                      dislikes_count INTEGER DEFAULT 0,
+                                     comments_count INTEGER DEFAULT 0,
                                      created_at TIMESTAMP NOT NULL,
                                      updated_at TIMESTAMP NOT NULL
 );

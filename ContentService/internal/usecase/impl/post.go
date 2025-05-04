@@ -46,9 +46,9 @@ func (u *postUsecaseImpl) GetPost(ctx context.Context, id string) (*entity.Post,
 	if err != nil {
 		return nil, err
 	}
-	var valComments []entity.Comment
+	var valComments []*entity.Comment
 	for _, c := range comments {
-		valComments = append(valComments, *c)
+		valComments = append(valComments, c)
 	}
 	post.Comments = valComments
 
@@ -66,8 +66,9 @@ func (u *postUsecaseImpl) ListPosts(ctx context.Context, offset, limit int) ([]*
 	for _, post := range posts {
 		comments, err := u.commentRepo.ListByPostID(ctx, post.ID)
 		if err != nil {
-			continue
+			continue // or log the error
 		}
+		post.Comments = comments
 		post.CommentsCount = int32(len(comments))
 	}
 

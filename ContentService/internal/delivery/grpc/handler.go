@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"github.com/google/uuid"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 
 	pb "github.com/KaminurOrynbek/BiznesAsh/auto-proto/content"
@@ -31,6 +32,9 @@ func NewContentHandler(
 }
 
 func (h *ContentHandler) CreatePost(ctx context.Context, req *pb.CreatePostRequest) (*pb.PostResponse, error) {
+	if req.Id == "" {
+		req.Id = uuid.NewString()
+	}
 	post := &entity.Post{
 		ID:        req.Id,
 		Title:     req.Title,
@@ -77,7 +81,8 @@ func (h *ContentHandler) GetPost(ctx context.Context, req *pb.PostIdRequest) (*p
 }
 
 func (h *ContentHandler) ListPosts(ctx context.Context, req *pb.ListPostsRequest) (*pb.ListPostsResponse, error) {
-	posts, err := h.postUsecase.ListPosts(ctx, int(req.Offset), int(req.Limit))
+	offset := (int(req.Page) - 1) * int(req.Limit)
+	posts, err := h.postUsecase.ListPosts(ctx, offset, int(req.Limit))
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +94,8 @@ func (h *ContentHandler) ListPosts(ctx context.Context, req *pb.ListPostsRequest
 }
 
 func (h *ContentHandler) SearchPosts(ctx context.Context, req *pb.SearchPostsRequest) (*pb.ListPostsResponse, error) {
-	posts, err := h.postUsecase.SearchPosts(ctx, req.Query, int(req.Offset), int(req.Limit))
+	offset := (int(req.Page) - 1) * int(req.Limit)
+	posts, err := h.postUsecase.SearchPosts(ctx, req.Query, offset, int(req.Limit))
 	if err != nil {
 		return nil, err
 	}
@@ -101,6 +107,9 @@ func (h *ContentHandler) SearchPosts(ctx context.Context, req *pb.SearchPostsReq
 }
 
 func (h *ContentHandler) CreateComment(ctx context.Context, req *pb.CreateCommentRequest) (*pb.CommentResponse, error) {
+	if req.Id == "" {
+		req.Id = uuid.NewString()
+	}
 	comment := &entity.Comment{
 		ID:        req.Id,
 		PostID:    req.PostId,
@@ -134,15 +143,24 @@ func (h *ContentHandler) DeleteComment(ctx context.Context, req *pb.CommentIdReq
 	return &pb.DeleteResponse{Success: true}, nil
 }
 
-func (h *ContentHandler) ListComments(ctx context.Context, req *pb.PostIdRequest) (*pb.ListCommentsResponse, error) {
-	comments, err := h.commentUsecase.ListCommentsByPostID(ctx, req.Id)
+func (h *ContentHandler) ListComments(ctx context.Context, req *pb.ListCommentsRequest) (*pb.ListCommentsResponse, error) {
+	comments, err := h.commentUsecase.ListCommentsByPostID(ctx, req.GetPostId())
 	if err != nil {
 		return nil, err
 	}
+
 	var pbComments []*pb.Comment
 	for _, c := range comments {
-		pbComments = append(pbComments, convertCommentToPB(c))
+		pbComments = append(pbComments, &pb.Comment{
+			Id:        c.ID,
+			PostId:    c.PostID,
+			AuthorId:  c.AuthorID,
+			Content:   c.Content,
+			CreatedAt: timestamppb.New(c.CreatedAt),
+			UpdatedAt: timestamppb.New(c.UpdatedAt),
+		})
 	}
+
 	return &pb.ListCommentsResponse{Comments: pbComments}, nil
 }
 
@@ -174,11 +192,11 @@ func (h *ContentHandler) DislikePost(ctx context.Context, req *pb.DislikePostReq
 	return &pb.DislikePostResponse{DislikesCount: 1}, nil
 }
 
-// mappers for post and comment
+// mappers
 func convertPostToPB(p *entity.Post) *pb.Post {
 	pbComments := make([]*pb.Comment, 0, len(p.Comments))
 	for _, c := range p.Comments {
-		pbComments = append(pbComments, convertCommentToPB(&c))
+		pbComments = append(pbComments, convertCommentToPB(c))
 	}
 	return &pb.Post{
 		Id:            p.ID,
@@ -202,7 +220,7 @@ func convertCommentToPB(c *entity.Comment) *pb.Comment {
 		PostId:    c.PostID,
 		AuthorId:  c.AuthorID,
 		Content:   c.Content,
-		CreatedAt: c.CreatedAt.Format(time.RFC3339),
-		UpdatedAt: c.UpdatedAt.Format(time.RFC3339),
+		CreatedAt: timestamppb.New(c.CreatedAt),
+		UpdatedAt: timestamppb.New(c.UpdatedAt),
 	}
 }

@@ -1,11 +1,12 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 package content;
 
 option go_package = "github.com/KaminurOrynbek/BiznesAsh/ContentService/auto-proto";
 
 service ContentService {
-
   rpc CreatePost(CreatePostRequest) returns (PostResponse);
   rpc UpdatePost(UpdatePostRequest) returns (PostResponse);
   rpc DeletePost(PostIdRequest) returns (DeleteResponse);
@@ -13,17 +14,14 @@ service ContentService {
   rpc ListPosts(ListPostsRequest) returns (ListPostsResponse);
   rpc SearchPosts(SearchPostsRequest) returns (ListPostsResponse);
 
-
   rpc CreateComment(CreateCommentRequest) returns (CommentResponse);
   rpc UpdateComment(UpdateCommentRequest) returns (CommentResponse);
   rpc DeleteComment(CommentIdRequest) returns (DeleteResponse);
-  rpc ListComments(PostIdRequest) returns (ListCommentsResponse);
-
+  rpc ListComments(ListCommentsRequest) returns (ListCommentsResponse);
 
   rpc LikePost(LikePostRequest) returns (LikePostResponse);
   rpc DislikePost(DislikePostRequest) returns (DislikePostResponse);
 }
-
 
 enum PostType {
   LEGAL_INFO = 0;
@@ -41,6 +39,8 @@ message Post {
   int32 dislikes_count = 8;
   string created_at = 9;
   string updated_at = 10;
+  int32 comments_count = 11;
+  repeated Comment comments = 12;
 }
 
 message Comment {
@@ -48,8 +48,8 @@ message Comment {
   string post_id = 2;
   string author_id = 3;
   string content = 4;
-  string created_at = 5;
-  string updated_at = 6;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
 }
 
 message Like {
@@ -61,6 +61,7 @@ message Like {
 }
 
 // Request/Response DTOs
+
 message CreatePostRequest {
   string id = 1;
   string title = 2;
@@ -105,7 +106,6 @@ message DeleteResponse {
   bool success = 1;
 }
 
-
 message CreateCommentRequest {
   string id = 1;
   string post_id = 2;
@@ -128,6 +128,10 @@ message CommentResponse {
 
 message ListCommentsResponse {
   repeated Comment comments = 1;
+}
+
+message ListCommentsRequest {
+  string post_id = 1;
 }
 
 
