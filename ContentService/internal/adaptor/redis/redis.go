@@ -13,9 +13,9 @@ type RedisClient struct {
 
 func NewRedisClient(addr, password string, db int) *RedisClient {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     addr,     // "localhost:6379"
-		Password: password, // "" if none
-		DB:       db,       // usually 0
+		Addr:     addr,
+		Password: password,
+		DB:       db,
 	})
 
 	return &RedisClient{Client: rdb}
@@ -34,19 +34,19 @@ func (r *RedisClient) Delete(ctx context.Context, key string) error {
 }
 
 func (r *RedisClient) SetStruct(ctx context.Context, key string, data interface{}, ttl time.Duration) error {
-	val, err := json.Marshal(data)
+	bytes, err := json.Marshal(data)
 	if err != nil {
 		return err
 	}
-	return r.Client.Set(ctx, key, val, ttl).Err()
+	return r.Client.Set(ctx, key, bytes, ttl).Err()
 }
 
 func (r *RedisClient) GetStruct(ctx context.Context, key string, dest interface{}) error {
-	val, err := r.Client.Get(ctx, key).Result()
+	data, err := r.Client.Get(ctx, key).Result()
 	if err != nil {
 		return err
 	}
-	return json.Unmarshal([]byte(val), dest)
+	return json.Unmarshal([]byte(data), dest)
 }
 
 func (r *RedisClient) Ping(ctx context.Context) error {

@@ -46,7 +46,7 @@ type ContentServiceClient interface {
 	CreateComment(ctx context.Context, in *CreateCommentRequest, opts ...grpc.CallOption) (*CommentResponse, error)
 	UpdateComment(ctx context.Context, in *UpdateCommentRequest, opts ...grpc.CallOption) (*CommentResponse, error)
 	DeleteComment(ctx context.Context, in *CommentIdRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
-	ListComments(ctx context.Context, in *PostIdRequest, opts ...grpc.CallOption) (*ListCommentsResponse, error)
+	ListComments(ctx context.Context, in *ListCommentsRequest, opts ...grpc.CallOption) (*ListCommentsResponse, error)
 	LikePost(ctx context.Context, in *LikePostRequest, opts ...grpc.CallOption) (*LikePostResponse, error)
 	DislikePost(ctx context.Context, in *DislikePostRequest, opts ...grpc.CallOption) (*DislikePostResponse, error)
 }
@@ -149,7 +149,7 @@ func (c *contentServiceClient) DeleteComment(ctx context.Context, in *CommentIdR
 	return out, nil
 }
 
-func (c *contentServiceClient) ListComments(ctx context.Context, in *PostIdRequest, opts ...grpc.CallOption) (*ListCommentsResponse, error) {
+func (c *contentServiceClient) ListComments(ctx context.Context, in *ListCommentsRequest, opts ...grpc.CallOption) (*ListCommentsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListCommentsResponse)
 	err := c.cc.Invoke(ctx, ContentService_ListComments_FullMethodName, in, out, cOpts...)
@@ -192,7 +192,7 @@ type ContentServiceServer interface {
 	CreateComment(context.Context, *CreateCommentRequest) (*CommentResponse, error)
 	UpdateComment(context.Context, *UpdateCommentRequest) (*CommentResponse, error)
 	DeleteComment(context.Context, *CommentIdRequest) (*DeleteResponse, error)
-	ListComments(context.Context, *PostIdRequest) (*ListCommentsResponse, error)
+	ListComments(context.Context, *ListCommentsRequest) (*ListCommentsResponse, error)
 	LikePost(context.Context, *LikePostRequest) (*LikePostResponse, error)
 	DislikePost(context.Context, *DislikePostRequest) (*DislikePostResponse, error)
 	mustEmbedUnimplementedContentServiceServer()
@@ -232,7 +232,7 @@ func (UnimplementedContentServiceServer) UpdateComment(context.Context, *UpdateC
 func (UnimplementedContentServiceServer) DeleteComment(context.Context, *CommentIdRequest) (*DeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteComment not implemented")
 }
-func (UnimplementedContentServiceServer) ListComments(context.Context, *PostIdRequest) (*ListCommentsResponse, error) {
+func (UnimplementedContentServiceServer) ListComments(context.Context, *ListCommentsRequest) (*ListCommentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListComments not implemented")
 }
 func (UnimplementedContentServiceServer) LikePost(context.Context, *LikePostRequest) (*LikePostResponse, error) {
@@ -425,7 +425,7 @@ func _ContentService_DeleteComment_Handler(srv interface{}, ctx context.Context,
 }
 
 func _ContentService_ListComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PostIdRequest)
+	in := new(ListCommentsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -437,7 +437,7 @@ func _ContentService_ListComments_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: ContentService_ListComments_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ContentServiceServer).ListComments(ctx, req.(*PostIdRequest))
+		return srv.(ContentServiceServer).ListComments(ctx, req.(*ListCommentsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/dao"
+	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
 	"log"
 	"net"
 	"time"
@@ -18,6 +20,13 @@ import (
 	usecaseImpl "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/impl"
 )
 
+type combinedUsecase struct {
+	_interface.NotificationUsecase
+	_interface.VerificationUsecase
+	_interface.SubscriptionUsecase
+	_interface.EmailSender
+}
+
 func main() {
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -29,23 +38,31 @@ func main() {
 	natsConn := config.ConnectNATS()
 	defer func() {
 		natsConn.Close()
-		log.Println("Disconnected from NATS ")
+		log.Println("Disconnected from NATS")
 	}()
 
-	notificationRepo := repo.NewNotificationRepository(db)
-	subscriptionRepo := repo.NewSubscriptionRepository(db)
-	verificationRepo := repo.NewVerificationRepository(db)
+	notificationDAO := dao.NewNotificationDAO(db)
+	subscriptionDAO := dao.NewSubscriptionDAO(db)
+	verificationDAO := dao.NewVerificationDAO(db)
 
 	emailSender := postgres.NewEmailSender(cfg)
 
-	notificationUsecase := usecaseImpl.NewNotificationUsecase(
-		emailSender,
-		notificationRepo,
-		subscriptionRepo,
-		verificationRepo,
-	)
+	notificationRepo := repo.NewNotificationRepository(notificationDAO)
+	subscriptionRepo := repo.NewSubscriptionRepository(subscriptionDAO)
+	verificationRepo := repo.NewVerificationRepository(verificationDAO)
 
-	notificationDelivery := delivery.NewNotificationDelivery(notificationUsecase)
+	notificationUC := usecaseImpl.NewNotificationUsecase(notificationRepo, emailSender)
+	verificationUC := usecaseImpl.NewVerificationUsecase(verificationRepo, emailSender)
+	subscriptionUC := usecaseImpl.NewSubscriptionUsecase(subscriptionRepo)
+
+	combined := &combinedUsecase{
+		NotificationUsecase: notificationUC,
+		VerificationUsecase: verificationUC,
+		SubscriptionUsecase: subscriptionUC,
+		EmailSender:         emailSender,
+	}
+
+	notificationDelivery := delivery.NewNotificationDelivery(combined)
 
 	lis, err := net.Listen("tcp", ":"+cfg.GrpcPort)
 	if err != nil {
@@ -73,7 +90,7 @@ func main() {
 
 		// 1. SendWelcomeEmail --------------------------------------------------------------------------------
 		emailRequest := &pb.EmailRequest{
-			Email:   "kaminurorinbek@gmail.com",
+			Email:   "alimakairat17@gmail.com",
 			Subject: "Test: Welcome to BiznesAsh",
 			Body: `<!DOCTYPE html>
 <html lang="en">

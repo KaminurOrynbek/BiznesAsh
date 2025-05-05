@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/config"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/usecase"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
 	"net/smtp"
 )
 
@@ -13,7 +13,7 @@ type smtpEmailSender struct {
 	cfg *config.Config
 }
 
-func NewEmailSender(cfg *config.Config) usecase.EmailSender {
+func NewEmailSender(cfg *config.Config) _interface.EmailSender {
 	return &smtpEmailSender{
 		cfg: cfg,
 	}

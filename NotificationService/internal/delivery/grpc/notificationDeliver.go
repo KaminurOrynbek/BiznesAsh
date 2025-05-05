@@ -2,17 +2,18 @@ package grpc
 
 import (
 	"context"
+
 	pb "github.com/KaminurOrynbek/BiznesAsh/auto-proto/notification"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/usecase"
+	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
 )
 
 type NotificationDelivery struct {
 	pb.UnimplementedNotificationServiceServer
-	usecase usecase.NotificationUsecase
+	usecase _interface.CombinedUsecase
 }
 
-func NewNotificationDelivery(u usecase.NotificationUsecase) *NotificationDelivery {
+func NewNotificationDelivery(u _interface.CombinedUsecase) *NotificationDelivery {
 	return &NotificationDelivery{
 		usecase: u,
 	}
@@ -24,7 +25,7 @@ func (d *NotificationDelivery) SendWelcomeEmail(ctx context.Context, req *pb.Ema
 		Subject: req.GetSubject(),
 		Body:    req.GetBody(),
 	}
-	err := d.usecase.SendWelcomeEmail(ctx, email)
+	err := d.usecase.SendEmail(ctx, email)
 	if err != nil {
 		return nil, err
 	}
@@ -87,6 +88,19 @@ func (d *NotificationDelivery) NotifyPostUpdate(ctx context.Context, req *pb.Pos
 	return &pb.NotificationResponse{Success: true, Message: "Post Update Notification Sent"}, nil
 }
 
+func (d *NotificationDelivery) NotifySystemMessage(ctx context.Context, req *pb.SystemMessageRequest) (*pb.NotificationResponse, error) {
+	notification := &entity.Notification{
+		UserID:  req.GetEmail(),
+		Message: req.GetMessage(),
+		Type:    "SYSTEM",
+	}
+	err := d.usecase.NotifySystemMessage(ctx, notification)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.NotificationResponse{Success: true, Message: "System Message Sent"}, nil
+}
+
 func (d *NotificationDelivery) SendVerificationEmail(ctx context.Context, req *pb.EmailRequest) (*pb.NotificationResponse, error) {
 	email := &entity.Email{
 		To:      req.GetEmail(),
@@ -108,21 +122,16 @@ func (d *NotificationDelivery) VerifyEmail(ctx context.Context, req *pb.Verifica
 	return &pb.NotificationResponse{Success: success, Message: "Verification Result"}, nil
 }
 
-func (d *NotificationDelivery) NotifySystemMessage(ctx context.Context, req *pb.SystemMessageRequest) (*pb.NotificationResponse, error) {
-	notification := &entity.Notification{
-		UserID:  req.GetEmail(),
-		Message: req.GetMessage(),
-		Type:    "SYSTEM",
-	}
-	err := d.usecase.NotifySystemMessage(ctx, notification)
+func (d *NotificationDelivery) ResendVerificationCode(ctx context.Context, req *pb.UserID) (*pb.NotificationResponse, error) {
+	err := d.usecase.ResendVerificationCode(ctx, req.GetUserId())
 	if err != nil {
 		return nil, err
 	}
-	return &pb.NotificationResponse{Success: true, Message: "System Message Sent"}, nil
+	return &pb.NotificationResponse{Success: true, Message: "Verification code resent"}, nil
 }
 
 func (d *NotificationDelivery) SubscribeToUpdates(ctx context.Context, req *pb.UserID) (*pb.NotificationResponse, error) {
-	err := d.usecase.Subscribe(ctx, req.GetUserId(), []string{}) // (you can pass eventTypes if needed)
+	err := d.usecase.Subscribe(ctx, req.GetUserId(), []string{})
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +139,7 @@ func (d *NotificationDelivery) SubscribeToUpdates(ctx context.Context, req *pb.U
 }
 
 func (d *NotificationDelivery) UnsubscribeFromUpdates(ctx context.Context, req *pb.UserID) (*pb.NotificationResponse, error) {
-	err := d.usecase.Unsubscribe(ctx, req.GetUserId(), "") // (you can specify eventType if needed)
+	err := d.usecase.Unsubscribe(ctx, req.GetUserId(), "")
 	if err != nil {
 		return nil, err
 	}
@@ -145,15 +154,7 @@ func (d *NotificationDelivery) GetSubscriptions(ctx context.Context, req *pb.Use
 	return &pb.SubscriptionsResponse{Subscriptions: subs}, nil
 }
 
-func (d *NotificationDelivery) ResendVerificationCode(ctx context.Context, req *pb.UserID) (*pb.NotificationResponse, error) {
-	err := d.usecase.ResendVerificationCode(ctx, req.GetUserId())
-	if err != nil {
-		return nil, err
-	}
-	return &pb.NotificationResponse{Success: true, Message: "Verification code resent"}, nil
-}
-
-// small helper function to create *string
+// small helper function
 func ptr(s string) *string {
 	return &s
 }

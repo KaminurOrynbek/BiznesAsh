@@ -26,9 +26,9 @@ func (Post) TableName() string {
 }
 
 func (p *Post) ToEntity() *entity.Post {
-	var entityComments []entity.Comment
+	var entityComments []*entity.Comment
 	for _, c := range p.Comments {
-		entityComments = append(entityComments, *c.ToEntity())
+		entityComments = append(entityComments, c.ToEntity())
 	}
 
 	return &entity.Post{

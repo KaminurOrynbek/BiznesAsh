@@ -9,6 +9,7 @@ package auto_proto
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -205,8 +206,8 @@ type Comment struct {
 	PostId        string                 `protobuf:"bytes,2,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
 	AuthorId      string                 `protobuf:"bytes,3,opt,name=author_id,json=authorId,proto3" json:"author_id,omitempty"`
 	Content       string                 `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     string                 `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -269,18 +270,18 @@ func (x *Comment) GetContent() string {
 	return ""
 }
 
-func (x *Comment) GetCreatedAt() string {
+func (x *Comment) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.CreatedAt
 	}
-	return ""
+	return nil
 }
 
-func (x *Comment) GetUpdatedAt() string {
+func (x *Comment) GetUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
 	}
-	return ""
+	return nil
 }
 
 type Like struct {
@@ -558,7 +559,7 @@ func (x *PostIdRequest) GetId() string {
 type ListPostsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Type          PostType               `protobuf:"varint,1,opt,name=type,proto3,enum=content.PostType" json:"type,omitempty"`
-	Offset        int32                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	Page          int32                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
 	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -601,9 +602,9 @@ func (x *ListPostsRequest) GetType() PostType {
 	return PostType_LEGAL_INFO
 }
 
-func (x *ListPostsRequest) GetOffset() int32 {
+func (x *ListPostsRequest) GetPage() int32 {
 	if x != nil {
-		return x.Offset
+		return x.Page
 	}
 	return 0
 }
@@ -618,7 +619,7 @@ func (x *ListPostsRequest) GetLimit() int32 {
 type SearchPostsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Query         string                 `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"`
-	Offset        int32                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	Page          int32                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
 	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -661,9 +662,9 @@ func (x *SearchPostsRequest) GetQuery() string {
 	return ""
 }
 
-func (x *SearchPostsRequest) GetOffset() int32 {
+func (x *SearchPostsRequest) GetPage() int32 {
 	if x != nil {
-		return x.Offset
+		return x.Page
 	}
 	return 0
 }
@@ -1059,6 +1060,50 @@ func (x *ListCommentsResponse) GetComments() []*Comment {
 	return nil
 }
 
+type ListCommentsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PostId        string                 `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListCommentsRequest) Reset() {
+	*x = ListCommentsRequest{}
+	mi := &file_content_content_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListCommentsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListCommentsRequest) ProtoMessage() {}
+
+func (x *ListCommentsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_content_content_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListCommentsRequest.ProtoReflect.Descriptor instead.
+func (*ListCommentsRequest) Descriptor() ([]byte, []int) {
+	return file_content_content_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *ListCommentsRequest) GetPostId() string {
+	if x != nil {
+		return x.PostId
+	}
+	return ""
+}
+
 type LikePostRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	PostId        string                 `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
@@ -1069,7 +1114,7 @@ type LikePostRequest struct {
 
 func (x *LikePostRequest) Reset() {
 	*x = LikePostRequest{}
-	mi := &file_content_content_proto_msgTypes[16]
+	mi := &file_content_content_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1081,7 +1126,7 @@ func (x *LikePostRequest) String() string {
 func (*LikePostRequest) ProtoMessage() {}
 
 func (x *LikePostRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_content_content_proto_msgTypes[16]
+	mi := &file_content_content_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1094,7 +1139,7 @@ func (x *LikePostRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LikePostRequest.ProtoReflect.Descriptor instead.
 func (*LikePostRequest) Descriptor() ([]byte, []int) {
-	return file_content_content_proto_rawDescGZIP(), []int{16}
+	return file_content_content_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *LikePostRequest) GetPostId() string {
@@ -1121,7 +1166,7 @@ type DislikePostRequest struct {
 
 func (x *DislikePostRequest) Reset() {
 	*x = DislikePostRequest{}
-	mi := &file_content_content_proto_msgTypes[17]
+	mi := &file_content_content_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1133,7 +1178,7 @@ func (x *DislikePostRequest) String() string {
 func (*DislikePostRequest) ProtoMessage() {}
 
 func (x *DislikePostRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_content_content_proto_msgTypes[17]
+	mi := &file_content_content_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1146,7 +1191,7 @@ func (x *DislikePostRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DislikePostRequest.ProtoReflect.Descriptor instead.
 func (*DislikePostRequest) Descriptor() ([]byte, []int) {
-	return file_content_content_proto_rawDescGZIP(), []int{17}
+	return file_content_content_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *DislikePostRequest) GetPostId() string {
@@ -1172,7 +1217,7 @@ type LikePostResponse struct {
 
 func (x *LikePostResponse) Reset() {
 	*x = LikePostResponse{}
-	mi := &file_content_content_proto_msgTypes[18]
+	mi := &file_content_content_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1184,7 +1229,7 @@ func (x *LikePostResponse) String() string {
 func (*LikePostResponse) ProtoMessage() {}
 
 func (x *LikePostResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_content_content_proto_msgTypes[18]
+	mi := &file_content_content_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1197,7 +1242,7 @@ func (x *LikePostResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LikePostResponse.ProtoReflect.Descriptor instead.
 func (*LikePostResponse) Descriptor() ([]byte, []int) {
-	return file_content_content_proto_rawDescGZIP(), []int{18}
+	return file_content_content_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *LikePostResponse) GetLikesCount() int32 {
@@ -1216,7 +1261,7 @@ type DislikePostResponse struct {
 
 func (x *DislikePostResponse) Reset() {
 	*x = DislikePostResponse{}
-	mi := &file_content_content_proto_msgTypes[19]
+	mi := &file_content_content_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1228,7 +1273,7 @@ func (x *DislikePostResponse) String() string {
 func (*DislikePostResponse) ProtoMessage() {}
 
 func (x *DislikePostResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_content_content_proto_msgTypes[19]
+	mi := &file_content_content_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1241,7 +1286,7 @@ func (x *DislikePostResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DislikePostResponse.ProtoReflect.Descriptor instead.
 func (*DislikePostResponse) Descriptor() ([]byte, []int) {
-	return file_content_content_proto_rawDescGZIP(), []int{19}
+	return file_content_content_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *DislikePostResponse) GetDislikesCount() int32 {
@@ -1255,7 +1300,7 @@ var File_content_content_proto protoreflect.FileDescriptor
 
 const file_content_content_proto_rawDesc = "" +
 	"\n" +
-	"\x15content/content.proto\x12\acontent\"\x83\x03\n" +
+	"\x15content/content.proto\x12\acontent\x1a\x1fgoogle/protobuf/timestamp.proto\"\x83\x03\n" +
 	"\x04Post\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x18\n" +
@@ -1272,16 +1317,16 @@ const file_content_content_proto_rawDesc = "" +
 	"updated_at\x18\n" +
 	" \x01(\tR\tupdatedAt\x12%\n" +
 	"\x0ecomments_count\x18\v \x01(\x05R\rcommentsCount\x12,\n" +
-	"\bcomments\x18\f \x03(\v2\x10.content.CommentR\bcomments\"\xa7\x01\n" +
+	"\bcomments\x18\f \x03(\v2\x10.content.CommentR\bcomments\"\xdf\x01\n" +
 	"\aComment\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\apost_id\x18\x02 \x01(\tR\x06postId\x12\x1b\n" +
 	"\tauthor_id\x18\x03 \x01(\tR\bauthorId\x12\x18\n" +
-	"\acontent\x18\x04 \x01(\tR\acontent\x12\x1d\n" +
+	"\acontent\x18\x04 \x01(\tR\acontent\x129\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x06 \x01(\tR\tupdatedAt\"\x80\x01\n" +
+	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x80\x01\n" +
 	"\x04Like\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\apost_id\x18\x02 \x01(\tR\x06postId\x12\x17\n" +
@@ -1302,14 +1347,14 @@ const file_content_content_proto_rawDesc = "" +
 	"\acontent\x18\x03 \x01(\tR\acontent\x12\x1c\n" +
 	"\tpublished\x18\x04 \x01(\bR\tpublished\"\x1f\n" +
 	"\rPostIdRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"g\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"c\n" +
 	"\x10ListPostsRequest\x12%\n" +
-	"\x04type\x18\x01 \x01(\x0e2\x11.content.PostTypeR\x04type\x12\x16\n" +
-	"\x06offset\x18\x02 \x01(\x05R\x06offset\x12\x14\n" +
-	"\x05limit\x18\x03 \x01(\x05R\x05limit\"X\n" +
+	"\x04type\x18\x01 \x01(\x0e2\x11.content.PostTypeR\x04type\x12\x12\n" +
+	"\x04page\x18\x02 \x01(\x05R\x04page\x12\x14\n" +
+	"\x05limit\x18\x03 \x01(\x05R\x05limit\"T\n" +
 	"\x12SearchPostsRequest\x12\x14\n" +
-	"\x05query\x18\x01 \x01(\tR\x05query\x12\x16\n" +
-	"\x06offset\x18\x02 \x01(\x05R\x06offset\x12\x14\n" +
+	"\x05query\x18\x01 \x01(\tR\x05query\x12\x12\n" +
+	"\x04page\x18\x02 \x01(\x05R\x04page\x12\x14\n" +
 	"\x05limit\x18\x03 \x01(\x05R\x05limit\"1\n" +
 	"\fPostResponse\x12!\n" +
 	"\x04post\x18\x01 \x01(\v2\r.content.PostR\x04post\"8\n" +
@@ -1330,7 +1375,9 @@ const file_content_content_proto_rawDesc = "" +
 	"\x0fCommentResponse\x12*\n" +
 	"\acomment\x18\x01 \x01(\v2\x10.content.CommentR\acomment\"D\n" +
 	"\x14ListCommentsResponse\x12,\n" +
-	"\bcomments\x18\x01 \x03(\v2\x10.content.CommentR\bcomments\"C\n" +
+	"\bcomments\x18\x01 \x03(\v2\x10.content.CommentR\bcomments\".\n" +
+	"\x13ListCommentsRequest\x12\x17\n" +
+	"\apost_id\x18\x01 \x01(\tR\x06postId\"C\n" +
 	"\x0fLikePostRequest\x12\x17\n" +
 	"\apost_id\x18\x01 \x01(\tR\x06postId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\"F\n" +
@@ -1345,7 +1392,7 @@ const file_content_content_proto_rawDesc = "" +
 	"\bPostType\x12\x0e\n" +
 	"\n" +
 	"LEGAL_INFO\x10\x00\x12\t\n" +
-	"\x05GUIDE\x10\x012\xc2\x06\n" +
+	"\x05GUIDE\x10\x012\xc8\x06\n" +
 	"\x0eContentService\x12?\n" +
 	"\n" +
 	"CreatePost\x12\x1a.content.CreatePostRequest\x1a\x15.content.PostResponse\x12?\n" +
@@ -1358,8 +1405,8 @@ const file_content_content_proto_rawDesc = "" +
 	"\vSearchPosts\x12\x1b.content.SearchPostsRequest\x1a\x1a.content.ListPostsResponse\x12H\n" +
 	"\rCreateComment\x12\x1d.content.CreateCommentRequest\x1a\x18.content.CommentResponse\x12H\n" +
 	"\rUpdateComment\x12\x1d.content.UpdateCommentRequest\x1a\x18.content.CommentResponse\x12C\n" +
-	"\rDeleteComment\x12\x19.content.CommentIdRequest\x1a\x17.content.DeleteResponse\x12E\n" +
-	"\fListComments\x12\x16.content.PostIdRequest\x1a\x1d.content.ListCommentsResponse\x12?\n" +
+	"\rDeleteComment\x12\x19.content.CommentIdRequest\x1a\x17.content.DeleteResponse\x12K\n" +
+	"\fListComments\x12\x1c.content.ListCommentsRequest\x1a\x1d.content.ListCommentsResponse\x12?\n" +
 	"\bLikePost\x12\x18.content.LikePostRequest\x1a\x19.content.LikePostResponse\x12H\n" +
 	"\vDislikePost\x12\x1b.content.DislikePostRequest\x1a\x1c.content.DislikePostResponseB?Z=github.com/KaminurOrynbek/BiznesAsh/ContentService/auto-protob\x06proto3"
 
@@ -1376,68 +1423,72 @@ func file_content_content_proto_rawDescGZIP() []byte {
 }
 
 var file_content_content_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_content_content_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
+var file_content_content_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
 var file_content_content_proto_goTypes = []any{
-	(PostType)(0),                // 0: content.PostType
-	(*Post)(nil),                 // 1: content.Post
-	(*Comment)(nil),              // 2: content.Comment
-	(*Like)(nil),                 // 3: content.Like
-	(*CreatePostRequest)(nil),    // 4: content.CreatePostRequest
-	(*UpdatePostRequest)(nil),    // 5: content.UpdatePostRequest
-	(*PostIdRequest)(nil),        // 6: content.PostIdRequest
-	(*ListPostsRequest)(nil),     // 7: content.ListPostsRequest
-	(*SearchPostsRequest)(nil),   // 8: content.SearchPostsRequest
-	(*PostResponse)(nil),         // 9: content.PostResponse
-	(*ListPostsResponse)(nil),    // 10: content.ListPostsResponse
-	(*DeleteResponse)(nil),       // 11: content.DeleteResponse
-	(*CreateCommentRequest)(nil), // 12: content.CreateCommentRequest
-	(*UpdateCommentRequest)(nil), // 13: content.UpdateCommentRequest
-	(*CommentIdRequest)(nil),     // 14: content.CommentIdRequest
-	(*CommentResponse)(nil),      // 15: content.CommentResponse
-	(*ListCommentsResponse)(nil), // 16: content.ListCommentsResponse
-	(*LikePostRequest)(nil),      // 17: content.LikePostRequest
-	(*DislikePostRequest)(nil),   // 18: content.DislikePostRequest
-	(*LikePostResponse)(nil),     // 19: content.LikePostResponse
-	(*DislikePostResponse)(nil),  // 20: content.DislikePostResponse
+	(PostType)(0),                 // 0: content.PostType
+	(*Post)(nil),                  // 1: content.Post
+	(*Comment)(nil),               // 2: content.Comment
+	(*Like)(nil),                  // 3: content.Like
+	(*CreatePostRequest)(nil),     // 4: content.CreatePostRequest
+	(*UpdatePostRequest)(nil),     // 5: content.UpdatePostRequest
+	(*PostIdRequest)(nil),         // 6: content.PostIdRequest
+	(*ListPostsRequest)(nil),      // 7: content.ListPostsRequest
+	(*SearchPostsRequest)(nil),    // 8: content.SearchPostsRequest
+	(*PostResponse)(nil),          // 9: content.PostResponse
+	(*ListPostsResponse)(nil),     // 10: content.ListPostsResponse
+	(*DeleteResponse)(nil),        // 11: content.DeleteResponse
+	(*CreateCommentRequest)(nil),  // 12: content.CreateCommentRequest
+	(*UpdateCommentRequest)(nil),  // 13: content.UpdateCommentRequest
+	(*CommentIdRequest)(nil),      // 14: content.CommentIdRequest
+	(*CommentResponse)(nil),       // 15: content.CommentResponse
+	(*ListCommentsResponse)(nil),  // 16: content.ListCommentsResponse
+	(*ListCommentsRequest)(nil),   // 17: content.ListCommentsRequest
+	(*LikePostRequest)(nil),       // 18: content.LikePostRequest
+	(*DislikePostRequest)(nil),    // 19: content.DislikePostRequest
+	(*LikePostResponse)(nil),      // 20: content.LikePostResponse
+	(*DislikePostResponse)(nil),   // 21: content.DislikePostResponse
+	(*timestamppb.Timestamp)(nil), // 22: google.protobuf.Timestamp
 }
 var file_content_content_proto_depIdxs = []int32{
 	0,  // 0: content.Post.type:type_name -> content.PostType
 	2,  // 1: content.Post.comments:type_name -> content.Comment
-	0,  // 2: content.CreatePostRequest.type:type_name -> content.PostType
-	0,  // 3: content.ListPostsRequest.type:type_name -> content.PostType
-	1,  // 4: content.PostResponse.post:type_name -> content.Post
-	1,  // 5: content.ListPostsResponse.posts:type_name -> content.Post
-	2,  // 6: content.CommentResponse.comment:type_name -> content.Comment
-	2,  // 7: content.ListCommentsResponse.comments:type_name -> content.Comment
-	4,  // 8: content.ContentService.CreatePost:input_type -> content.CreatePostRequest
-	5,  // 9: content.ContentService.UpdatePost:input_type -> content.UpdatePostRequest
-	6,  // 10: content.ContentService.DeletePost:input_type -> content.PostIdRequest
-	6,  // 11: content.ContentService.GetPost:input_type -> content.PostIdRequest
-	7,  // 12: content.ContentService.ListPosts:input_type -> content.ListPostsRequest
-	8,  // 13: content.ContentService.SearchPosts:input_type -> content.SearchPostsRequest
-	12, // 14: content.ContentService.CreateComment:input_type -> content.CreateCommentRequest
-	13, // 15: content.ContentService.UpdateComment:input_type -> content.UpdateCommentRequest
-	14, // 16: content.ContentService.DeleteComment:input_type -> content.CommentIdRequest
-	6,  // 17: content.ContentService.ListComments:input_type -> content.PostIdRequest
-	17, // 18: content.ContentService.LikePost:input_type -> content.LikePostRequest
-	18, // 19: content.ContentService.DislikePost:input_type -> content.DislikePostRequest
-	9,  // 20: content.ContentService.CreatePost:output_type -> content.PostResponse
-	9,  // 21: content.ContentService.UpdatePost:output_type -> content.PostResponse
-	11, // 22: content.ContentService.DeletePost:output_type -> content.DeleteResponse
-	9,  // 23: content.ContentService.GetPost:output_type -> content.PostResponse
-	10, // 24: content.ContentService.ListPosts:output_type -> content.ListPostsResponse
-	10, // 25: content.ContentService.SearchPosts:output_type -> content.ListPostsResponse
-	15, // 26: content.ContentService.CreateComment:output_type -> content.CommentResponse
-	15, // 27: content.ContentService.UpdateComment:output_type -> content.CommentResponse
-	11, // 28: content.ContentService.DeleteComment:output_type -> content.DeleteResponse
-	16, // 29: content.ContentService.ListComments:output_type -> content.ListCommentsResponse
-	19, // 30: content.ContentService.LikePost:output_type -> content.LikePostResponse
-	20, // 31: content.ContentService.DislikePost:output_type -> content.DislikePostResponse
-	20, // [20:32] is the sub-list for method output_type
-	8,  // [8:20] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	22, // 2: content.Comment.created_at:type_name -> google.protobuf.Timestamp
+	22, // 3: content.Comment.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 4: content.CreatePostRequest.type:type_name -> content.PostType
+	0,  // 5: content.ListPostsRequest.type:type_name -> content.PostType
+	1,  // 6: content.PostResponse.post:type_name -> content.Post
+	1,  // 7: content.ListPostsResponse.posts:type_name -> content.Post
+	2,  // 8: content.CommentResponse.comment:type_name -> content.Comment
+	2,  // 9: content.ListCommentsResponse.comments:type_name -> content.Comment
+	4,  // 10: content.ContentService.CreatePost:input_type -> content.CreatePostRequest
+	5,  // 11: content.ContentService.UpdatePost:input_type -> content.UpdatePostRequest
+	6,  // 12: content.ContentService.DeletePost:input_type -> content.PostIdRequest
+	6,  // 13: content.ContentService.GetPost:input_type -> content.PostIdRequest
+	7,  // 14: content.ContentService.ListPosts:input_type -> content.ListPostsRequest
+	8,  // 15: content.ContentService.SearchPosts:input_type -> content.SearchPostsRequest
+	12, // 16: content.ContentService.CreateComment:input_type -> content.CreateCommentRequest
+	13, // 17: content.ContentService.UpdateComment:input_type -> content.UpdateCommentRequest
+	14, // 18: content.ContentService.DeleteComment:input_type -> content.CommentIdRequest
+	17, // 19: content.ContentService.ListComments:input_type -> content.ListCommentsRequest
+	18, // 20: content.ContentService.LikePost:input_type -> content.LikePostRequest
+	19, // 21: content.ContentService.DislikePost:input_type -> content.DislikePostRequest
+	9,  // 22: content.ContentService.CreatePost:output_type -> content.PostResponse
+	9,  // 23: content.ContentService.UpdatePost:output_type -> content.PostResponse
+	11, // 24: content.ContentService.DeletePost:output_type -> content.DeleteResponse
+	9,  // 25: content.ContentService.GetPost:output_type -> content.PostResponse
+	10, // 26: content.ContentService.ListPosts:output_type -> content.ListPostsResponse
+	10, // 27: content.ContentService.SearchPosts:output_type -> content.ListPostsResponse
+	15, // 28: content.ContentService.CreateComment:output_type -> content.CommentResponse
+	15, // 29: content.ContentService.UpdateComment:output_type -> content.CommentResponse
+	11, // 30: content.ContentService.DeleteComment:output_type -> content.DeleteResponse
+	16, // 31: content.ContentService.ListComments:output_type -> content.ListCommentsResponse
+	20, // 32: content.ContentService.LikePost:output_type -> content.LikePostResponse
+	21, // 33: content.ContentService.DislikePost:output_type -> content.DislikePostResponse
+	22, // [22:34] is the sub-list for method output_type
+	10, // [10:22] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_content_content_proto_init() }
@@ -1451,7 +1502,7 @@ func file_content_content_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_content_content_proto_rawDesc), len(file_content_content_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   20,
+			NumMessages:   21,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

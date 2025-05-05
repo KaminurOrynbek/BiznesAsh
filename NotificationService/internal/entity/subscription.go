@@ -1,6 +1,7 @@
 package entity
 
 type Subscription struct {
-	UserID     string
-	EventTypes []string
+	ID        string
+	UserID    string
+	EventType []string
 }
