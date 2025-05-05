@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/dao"
+	postgres2 "github.com/KaminurOrynbek/BiznesAsh/internal/config/postgres"
 	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
 	"log"
 	"net"
@@ -13,8 +14,6 @@ import (
 
 	pb "github.com/KaminurOrynbek/BiznesAsh/auto-proto/notification"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/config"
-
 	delivery "github.com/KaminurOrynbek/BiznesAsh/internal/delivery/grpc"
 	repo "github.com/KaminurOrynbek/BiznesAsh/internal/repository/impl"
 	usecaseImpl "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/impl"
@@ -33,9 +32,9 @@ func main() {
 		log.Println(".env file not found, continuing...")
 	}
 
-	cfg := config.LoadConfig()
-	db := config.ConnectAndMigrate()
-	natsConn := config.ConnectNATS()
+	cfg := postgres2.LoadConfig()
+	db := postgres2.ConnectAndMigrate()
+	natsConn := postgres2.ConnectNATS()
 	defer func() {
 		natsConn.Close()
 		log.Println("Disconnected from NATS")

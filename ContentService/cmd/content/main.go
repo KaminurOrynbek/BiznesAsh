@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"github.com/KaminurOrynbek/BiznesAsh/pkg/nats"
+	"github.com/KaminurOrynbek/BiznesAsh/pkg/queue"
 	"github.com/joho/godotenv"
 	"log"
 	"net"
@@ -87,7 +87,7 @@ func main() {
 
 	ctx := context.Background()
 
-	natsClient, err := nats.NewClient(ctx, []string{"nats://localhost:4222"}, os.Getenv("NKEY_SEED"), false)
+	natsClient, err := queue.NewClient(ctx, []string{"queue://localhost:4222"}, os.Getenv("NKEY_SEED"), false)
 	if err != nil {
 		log.Fatalf("failed to connect to NATS: %v", err)
 	}

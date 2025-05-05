@@ -3,17 +3,17 @@ package postgres
 import (
 	"context"
 	"fmt"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/config"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/config/postgres"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
 	"net/smtp"
 )
 
 type smtpEmailSender struct {
-	cfg *config.Config
+	cfg *postgres.Config
 }
 
-func NewEmailSender(cfg *config.Config) _interface.EmailSender {
+func NewEmailSender(cfg *postgres.Config) _interface.EmailSender {
 	return &smtpEmailSender{
 		cfg: cfg,
 	}

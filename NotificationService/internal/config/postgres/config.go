@@ -1,4 +1,4 @@
-package config
+package postgres
 
 import (
 	"fmt"
@@ -29,7 +29,7 @@ func LoadConfig() *Config {
 		SMTPUsername:      getEnv("SMTP_USERNAME", ""),
 		SMTPPassword:      getEnv("SMTP_PASSWORD", ""),
 		NotificationDBUrl: getEnv("NOTIFICATION_DB_URL", "postgres://user:password@localhost:5432/notificationdb?sslmode=disable"),
-		NatsURL:           getEnv("NATS_URL", "nats://localhost:4222"),
+		NatsURL:           getEnv("NATS_URL", "queue://localhost:4222"),
 	}
 }
 
@@ -73,7 +73,7 @@ func ConnectAndMigrate() *sqlx.DB {
 func ConnectNATS() *nats.Conn {
 	natsURL := os.Getenv("NATS_URL")
 	if natsURL == "" {
-		natsURL = "nats://localhost:4222"
+		natsURL = "queue://localhost:4222"
 	}
 
 	nc, err := nats.Connect(natsURL)
