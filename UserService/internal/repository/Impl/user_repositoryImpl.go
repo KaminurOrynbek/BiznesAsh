@@ -2,9 +2,9 @@ package repository
 
 import (
 	"context"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/dao"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/repository/RepoInterfaces"
+	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/postgres/dao"
+	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/entity"
+	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/repository/RepoInterfaces"
 )
 
 type userRepositoryImpl struct {

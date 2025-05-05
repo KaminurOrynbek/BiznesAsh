@@ -1,7 +1,7 @@
 package Usecase_Interfaces
 
 import (
-	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
+	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/entity"
 )
 
 type UserUsecase interface {

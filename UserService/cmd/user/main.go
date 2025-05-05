@@ -1,12 +1,14 @@
 package main
 
 import (
-	pb "github.com/KaminurOrynbek/BiznesAsh/auto-proto/user"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/dao"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/configs/posgres"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/delivery/grpc"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/middleware"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/usecase/Impl"
+	pb "github.com/KaminurOrynbek/BiznesAsh/UserService/auto-proto/user"
+	nats "github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/nats"
+	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/postgres/dao"
+	natscfg "github.com/KaminurOrynbek/BiznesAsh/UserService/internal/configs/nats"
+	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/configs/posgres"
+	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/delivery/grpc"
+	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/middleware"
+	usecase "github.com/KaminurOrynbek/BiznesAsh/UserService/internal/usecase/Impl"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -38,6 +40,10 @@ func main() {
 	)
 
 	pb.RegisterUserServiceServer(grpcServer, userServer)
+
+	natsConfig := natscfg.LoadConfig()
+	natsConn := nats.NewConnection(natsConfig)
+	defer natsConn.Close()
 
 	listener, err := net.Listen("tcp", ":"+cfg.GRPCPort)
 	if err != nil {

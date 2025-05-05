@@ -3,8 +3,8 @@ package grpc
 import (
 	"context"
 
-	pb "github.com/KaminurOrynbek/BiznesAsh/auto-proto/user"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/usecase/Usecase_Interfaces"
+	pb "github.com/KaminurOrynbek/BiznesAsh/UserService/auto-proto/user"
+	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/usecase/Usecase_Interfaces"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

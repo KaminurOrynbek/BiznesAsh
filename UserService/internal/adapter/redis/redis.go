@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
+	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/entity"
 	"github.com/go-redis/redis/v8"
 )
 
