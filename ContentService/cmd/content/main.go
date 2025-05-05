@@ -1,8 +1,8 @@
 package main
 
 import (
-	"context"
-	"github.com/KaminurOrynbek/BiznesAsh/pkg/queue"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats"
+	natscfg "github.com/KaminurOrynbek/BiznesAsh/internal/config/nats"
 	"github.com/joho/godotenv"
 	"log"
 	"net"
@@ -10,13 +10,9 @@ import (
 
 	"google.golang.org/grpc"
 
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/dao"
 	pgcfg "github.com/KaminurOrynbek/BiznesAsh/internal/config/postgres"
-	rediscfg "github.com/KaminurOrynbek/BiznesAsh/internal/config/redis"
-
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adaptor/postgres"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adaptor/redis"
-
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adaptor/postgres/dao"
 
 	repoimpl "github.com/KaminurOrynbek/BiznesAsh/internal/repository/Impl"
 	usecaseimpl "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/impl"
@@ -27,9 +23,9 @@ import (
 
 func init() {
 	if err := godotenv.Load(); err != nil {
-		log.Println("⚠️  No .env file found or failed to load")
+		log.Println("No .env file found or failed to load")
 	} else {
-		log.Println("✅ .env file loaded successfully")
+		log.Println("env file loaded successfully")
 	}
 }
 
@@ -37,16 +33,16 @@ func main() {
 
 	// 1. Load Config
 	pgConfig := pgcfg.LoadPostgresConfig()
-	redisConfig := rediscfg.LoadRedisConfig()
+	//redisConfig := rediscfg.LoadRedisConfig()
 
 	// 2. Init DB
 	db := postgres.NewPostgres(pgConfig.DSN())
 
-	// 3. Init Redis
-	redisClient := redis.NewRedisClient(redisConfig.Addr, redisConfig.Password, redisConfig.DB)
-	if err := redisClient.Ping(context.Background()); err != nil {
-		log.Fatalf("Redis connection failed: %v", err)
-	}
+	//// 3. Init Redis
+	//redisClient := redis.NewRedisClient(redisConfig.Addr, redisConfig.Password, redisConfig.DB)
+	//if err := redisClient.Ping(context.Background()); err != nil {
+	//	log.Fatalf("Redis connection failed: %v", err)
+	//}
 
 	// 4. Init DAOs
 	postDAO := dao.NewPostDAO(db)
@@ -62,6 +58,10 @@ func main() {
 	postUsecase := usecaseimpl.NewPostUsecase(postRepo, commentRepo)
 	commentUsecase := usecaseimpl.NewCommentUsecase(commentRepo)
 	likeUsecase := usecaseimpl.NewLikeUsecase(likeRepo)
+
+	natsConfig := natscfg.LoadConfig()
+	natsConn := nats.NewConnection(natsConfig)
+	defer natsConn.Close()
 
 	// 7. Init gRPC handler
 	contentHandler := handler.NewContentHandler(postUsecase, commentUsecase, likeUsecase)
@@ -85,11 +85,4 @@ func main() {
 		log.Fatalf("Failed to serve: %v", err)
 	}
 
-	ctx := context.Background()
-
-	natsClient, err := queue.NewClient(ctx, []string{"queue://localhost:4222"}, os.Getenv("NKEY_SEED"), false)
-	if err != nil {
-		log.Fatalf("failed to connect to NATS: %v", err)
-	}
-	defer natsClient.Close()
 }

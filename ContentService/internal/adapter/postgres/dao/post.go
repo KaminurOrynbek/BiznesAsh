@@ -2,7 +2,7 @@ package dao
 
 import (
 	"context"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adaptor/postgres/model"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/model"
 	"github.com/jmoiron/sqlx"
 )
 

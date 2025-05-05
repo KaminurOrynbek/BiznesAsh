@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/dao"
+	natscfg "github.com/KaminurOrynbek/BiznesAsh/internal/config/nats"
 	postgres2 "github.com/KaminurOrynbek/BiznesAsh/internal/config/postgres"
 	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
 	"log"
@@ -34,12 +36,16 @@ func main() {
 
 	cfg := postgres2.LoadConfig()
 	db := postgres2.ConnectAndMigrate()
-	natsConn := postgres2.ConnectNATS()
-	defer func() {
-		natsConn.Close()
-		log.Println("Disconnected from NATS")
-	}()
+	//natsConn := postgres2.ConnectNATS()
+	//defer func() {
+	//	natsConn.Close()
+	//	log.Println("Disconnected from NATS")
+	//}()
 
+	natsConfig := natscfg.LoadConfig()
+	natsConn := nats.NewConnection(natsConfig)
+	defer natsConn.Close()
+	
 	notificationDAO := dao.NewNotificationDAO(db)
 	subscriptionDAO := dao.NewSubscriptionDAO(db)
 	verificationDAO := dao.NewVerificationDAO(db)
@@ -272,4 +278,5 @@ func main() {
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}
+
 }

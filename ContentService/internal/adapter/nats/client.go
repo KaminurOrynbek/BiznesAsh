@@ -6,7 +6,6 @@ import (
 	"log"
 )
 
-// NewConnection создает и возвращает новое подключение к NATS
 func NewConnection(cfg *natscfg.Config) *nats.Conn {
 	opts := []nats.Option{
 		nats.MaxReconnects(cfg.NATSMaxReconnects),

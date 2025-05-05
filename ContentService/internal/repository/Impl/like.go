@@ -2,8 +2,8 @@ package Impl
 
 import (
 	"context"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adaptor/postgres/dao"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adaptor/postgres/model"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/dao"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/model"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
 	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/repository/interface"
 )
