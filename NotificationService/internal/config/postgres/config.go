@@ -7,7 +7,6 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
-	"github.com/nats-io/nats.go"
 )
 
 type Config struct {
@@ -20,7 +19,6 @@ type Config struct {
 	NatsURL           string
 }
 
-// LoadConfig reads environment variables and loads them into Config struct
 func LoadConfig() *Config {
 	return &Config{
 		GrpcPort:          getEnv("GRPC_PORT", "50051"),
@@ -33,7 +31,6 @@ func LoadConfig() *Config {
 	}
 }
 
-// Helper to get environment variable or fallback default
 func getEnv(key, defaultValue string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
@@ -41,7 +38,6 @@ func getEnv(key, defaultValue string) string {
 	return defaultValue
 }
 
-// Connect to PostgreSQL using sqlx
 func ConnectAndMigrate() *sqlx.DB {
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
@@ -66,21 +62,4 @@ func ConnectAndMigrate() *sqlx.DB {
 
 	log.Println("Connected to database successfully")
 	return db
-}
-
-// Connect to NATS server
-
-func ConnectNATS() *nats.Conn {
-	natsURL := os.Getenv("NATS_URL")
-	if natsURL == "" {
-		natsURL = "queue://localhost:4222"
-	}
-
-	nc, err := nats.Connect(natsURL)
-	if err != nil {
-		log.Fatal("Failed to connect to NATS:", err)
-	}
-
-	log.Println("Connected to NATS successfully")
-	return nc
 }

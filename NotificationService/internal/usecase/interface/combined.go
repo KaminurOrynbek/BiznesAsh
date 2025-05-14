@@ -5,4 +5,6 @@ type CombinedUsecase interface {
 	VerificationUsecase
 	SubscriptionUsecase
 	EmailSender
+	
+	GetWelcomeEmailHTML() string
 }

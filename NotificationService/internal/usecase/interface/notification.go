@@ -11,4 +11,5 @@ type NotificationUsecase interface {
 	NotifyNewPost(ctx context.Context, n *entity.Notification) error
 	NotifyPostUpdate(ctx context.Context, n *entity.Notification) error
 	NotifySystemMessage(ctx context.Context, n *entity.Notification) error
+	GetWelcomeEmailHTML() string
 }

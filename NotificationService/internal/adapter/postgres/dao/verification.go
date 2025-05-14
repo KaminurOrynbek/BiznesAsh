@@ -20,7 +20,6 @@ func (dao *VerificationDAO) Save(ctx context.Context, v *model.Verification) err
 	query := `INSERT INTO verifications (user_id, email, code, expires_at, is_used)
 	          VALUES (:user_id, :email, :code, :expires_at, :is_used)`
 
-	// Define an anonymous struct to exclude ID during insert
 	insert := struct {
 		UserID    string    `db:"user_id"`
 		Email     string    `db:"email"`

@@ -3,12 +3,14 @@ package main
 import (
 	pb "github.com/KaminurOrynbek/BiznesAsh/UserService/auto-proto/user"
 	nats "github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/nats"
+	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/nats/publisher"
 	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/postgres/dao"
 	natscfg "github.com/KaminurOrynbek/BiznesAsh/UserService/internal/configs/nats"
 	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/configs/posgres"
 	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/delivery/grpc"
 	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/middleware"
 	usecase "github.com/KaminurOrynbek/BiznesAsh/UserService/internal/usecase/Impl"
+	"github.com/KaminurOrynbek/BiznesAsh/UserService/pkg/queue"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -32,7 +34,15 @@ func main() {
 	defer db.Close()
 
 	userRepo := dao.NewUserDAO(db)
-	userUsecase := usecase.NewUserUsecase(userRepo)
+
+	natsConfig := natscfg.LoadConfig()
+	natsConn := nats.NewConnection(natsConfig)
+	natsQueue := queue.NewNATSQueue(natsConn)
+	defer natsConn.Close()
+
+	userPublisher := publisher.NewUserPublisher(natsQueue)
+
+	userUsecase := usecase.NewUserUsecase(userRepo, userPublisher)
 	userServer := grpc.NewUserServer(userUsecase)
 
 	grpcServer := gogrpc.NewServer(
@@ -40,10 +50,6 @@ func main() {
 	)
 
 	pb.RegisterUserServiceServer(grpcServer, userServer)
-
-	natsConfig := natscfg.LoadConfig()
-	natsConn := nats.NewConnection(natsConfig)
-	defer natsConn.Close()
 
 	listener, err := net.Listen("tcp", ":"+cfg.GRPCPort)
 	if err != nil {
