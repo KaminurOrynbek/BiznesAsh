@@ -1,34 +1,30 @@
 package redis
 
 import (
-	"log"
 	"os"
+	"strconv"
 )
 
-// Config holds the configuration values for Redis
-type Config struct {
-	RedisURL string
+type RedisConfig struct {
+	Addr     string
+	Password string
+	DB       int
 }
 
-// LoadConfig loads the Redis configuration from environment variables
-func LoadConfig() *Config {
-	redisURL := getEnv("REDIS_URL", "localhost:6379")
+func LoadRedisConfig() *RedisConfig {
+	dbStr := getEnv("REDIS_DB", "0")
+	db, _ := strconv.Atoi(dbStr)
 
-	return &Config{
-		RedisURL: redisURL,
+	return &RedisConfig{
+		Addr:     getEnv("REDIS_ADDR", "localhost:6379"),
+		Password: getEnv("REDIS_PASSWORD", ""),
+		DB:       db,
 	}
 }
 
-// GetRedisURL returns the Redis URL
-func (c *Config) GetRedisURL() string {
-	return c.RedisURL
-}
-
-func getEnv(key, defaultValue string) string {
-	value, exists := os.LookupEnv(key)
-	if !exists {
-		log.Printf("Environment variable %s not set, using default: %s", key, defaultValue)
-		return defaultValue
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
 	}
-	return value
+	return fallback
 }

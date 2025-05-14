@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats"
 	natscfg "github.com/KaminurOrynbek/BiznesAsh/internal/config/nats"
 	"github.com/joho/godotenv"
@@ -13,6 +14,9 @@ import (
 	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/dao"
 	pgcfg "github.com/KaminurOrynbek/BiznesAsh/internal/config/postgres"
+
+	redisclient "github.com/KaminurOrynbek/BiznesAsh/internal/adapter/redis"
+	rediscfg "github.com/KaminurOrynbek/BiznesAsh/internal/config/redis"
 
 	repoimpl "github.com/KaminurOrynbek/BiznesAsh/internal/repository/Impl"
 	usecaseimpl "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/impl"
@@ -33,16 +37,17 @@ func main() {
 
 	// 1. Load Config
 	pgConfig := pgcfg.LoadPostgresConfig()
-	//redisConfig := rediscfg.LoadRedisConfig()
+	redisConfig := rediscfg.LoadRedisConfig()
 
 	// 2. Init DB
 	db := postgres.NewPostgres(pgConfig.DSN())
 
-	//// 3. Init Redis
-	//redisClient := redis.NewRedisClient(redisConfig.Addr, redisConfig.Password, redisConfig.DB)
-	//if err := redisClient.Ping(context.Background()); err != nil {
-	//	log.Fatalf("Redis connection failed: %v", err)
-	//}
+	// 3. Init Redis
+	redisClient := redisclient.NewRedisClient(redisConfig.Addr, redisConfig.Password, redisConfig.DB)
+	if err := redisClient.Ping(context.Background()); err != nil {
+		log.Fatalf("Redis connection failed: %v", err)
+	}
+	log.Println("Connected to Redis successfully!")
 
 	// 4. Init DAOs
 	postDAO := dao.NewPostDAO(db)
