@@ -2,6 +2,8 @@ package usecase
 
 import (
 	"context"
+	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/nats/publisher"
+	"log"
 	"os"
 	"time"
 
@@ -16,11 +18,12 @@ import (
 )
 
 type userUsecaseImpl struct {
-	userRepo RepoInterfaces.UserRepository
+	userRepo  RepoInterfaces.UserRepository
+	publisher *publisher.UserPublisher
 }
 
-func NewUserUsecase(userRepo RepoInterfaces.UserRepository) Usecase_Interfaces.UserUsecase {
-	return &userUsecaseImpl{userRepo: userRepo}
+func NewUserUsecase(userRepo RepoInterfaces.UserRepository, publisher *publisher.UserPublisher) Usecase_Interfaces.UserUsecase {
+	return &userUsecaseImpl{userRepo: userRepo, publisher: publisher}
 }
 
 func (u *userUsecaseImpl) Register(email, username, password string) (*entity.User, error) {
@@ -44,6 +47,11 @@ func (u *userUsecaseImpl) Register(email, username, password string) (*entity.Us
 	createdUser, err := u.userRepo.CreateUser(context.Background(), user)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create user")
+	}
+
+	err = u.publisher.PublishUserRegistered(createdUser.ID, createdUser.Email)
+	if err != nil {
+		log.Printf("Failed to publish user.registered: %v", err)
 	}
 
 	return createdUser, nil
@@ -154,6 +162,11 @@ func (u *userUsecaseImpl) PromoteToAdmin(currentUserID, targetUserID string) (*e
 		return nil, errors.Wrap(err, "failed to promote to admin")
 	}
 
+	err = u.publisher.PublishUserPromotedToAdmin(targetUserID)
+	if err != nil {
+		log.Printf("Failed to publish user.promoted_to_admin event: %v", err)
+	}
+
 	return targetUser, nil
 }
 
@@ -194,6 +207,11 @@ func (u *userUsecaseImpl) DeleteAccount(currentUserID, targetUserID string) erro
 		return errors.Wrap(err, "failed to delete user")
 	}
 
+	err = u.publisher.PublishUserDeleted(targetUserID)
+	if err != nil {
+		log.Printf("Failed to publish user.deleted event: %v", err)
+	}
+
 	return nil
 }
 
@@ -228,6 +246,11 @@ func (u *userUsecaseImpl) BanUser(currentUserId string, targetUserId string) err
 	err = u.userRepo.UpdateUser(context.Background(), targetUser)
 	if err != nil {
 		return errors.Wrap(err, "failed to ban user")
+	}
+
+	err = u.publisher.PublishUserBanned(targetUserId, "Rule violation or other reason")
+	if err != nil {
+		log.Printf("Failed to publish user.banned event: %v", err)
 	}
 
 	return nil
