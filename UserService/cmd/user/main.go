@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net"
+	"os"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
@@ -10,15 +11,15 @@ import (
 	gogrpc "google.golang.org/grpc"
 
 	pb "github.com/KaminurOrynbek/BiznesAsh/UserService/auto-proto/user"
-	nats "github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/nats"
 	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/nats/publisher"
 	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/postgres/dao"
-	"github.com/KaminurOrynbek/BiznesAsh/UserService/pkg/queue"
-	natscfg "github.com/KaminurOrynbek/BiznesAsh/UserService/internal/configs/nats"
-	posgres "github.com/KaminurOrynbek/BiznesAsh/UserService/internal/configs/posgres"
 	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/delivery/grpc"
 	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/middleware"
 	usecase "github.com/KaminurOrynbek/BiznesAsh/UserService/internal/usecase/Impl"
+	"github.com/KaminurOrynbek/BiznesAsh_lib/adapter/nats"
+	natscfg "github.com/KaminurOrynbek/BiznesAsh_lib/config/nats"
+	postgresCfg "github.com/KaminurOrynbek/BiznesAsh_lib/config/postgres"
+	"github.com/KaminurOrynbek/BiznesAsh_lib/queue"
 )
 
 func main() {
@@ -28,30 +29,35 @@ func main() {
 		log.Printf("Warning: Could not load .env file: %v", err)
 	}
 
-	// Load Postgres config
-	cfg := posgres.LoadConfig()
-
-	// Connect to Postgres
-	db, err := sqlx.Connect("postgres", cfg.GetDBURL())
+	// Init Postgres
+	pgConfig := postgresCfg.LoadPostgresConfig()
+	db, err := sqlx.Connect("postgres", pgConfig.DSN())
 	if err != nil {
-		log.Fatalf("failed to connect to database: %v", err)
+		log.Fatalf("Failed to connect to Postgres: %v", err)
 	}
 	defer db.Close()
+	log.Println("Successfully connected to Postgres!")
 
 	// Init user repo
 	userRepo := dao.NewUserDAO(db)
 
 	// NATS setup
-	natsConfig := natscfg.LoadConfig()
-	rawConn := nats.NewConnection(natsConfig)
-	defer rawConn.Close()
+	natsConfig := natscfg.LoadNatsConfig()
+	natsConn := nats.NewConnection(natsConfig)
+	defer natsConn.Close()
 
 	// Wrap NATS into queue-compatible interface
-	msgQueue := queue.NewNATSQueue(rawConn)
+	msgQueue := queue.NewNATSQueue(natsConn)
 
 	// Create publisher and usecase
 	userPublisher := publisher.NewUserPublisher(msgQueue)
 	userUsecase := usecase.NewUserUsecase(userRepo, userPublisher)
+
+	// Get GRPC_PORT from environment
+	grpcPort := os.Getenv("GRPC_PORT")
+	if grpcPort == "" {
+		log.Fatal("GRPC_PORT is not set in environment variables")
+	}
 
 	// Create gRPC server
 	userServer := grpc.NewUserServer(userUsecase)
@@ -63,12 +69,12 @@ func main() {
 	pb.RegisterUserServiceServer(grpcServer, userServer)
 
 	// Start listener
-	listener, err := net.Listen("tcp", ":"+cfg.GRPCPort)
+	listener, err := net.Listen("tcp", ":"+grpcPort)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	log.Printf("gRPC server listening on port %s", cfg.GRPCPort)
+	log.Printf("gRPC server listening on port %s", grpcPort)
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}

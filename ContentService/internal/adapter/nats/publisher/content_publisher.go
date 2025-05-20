@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats/payloads"
-	"github.com/KaminurOrynbek/BiznesAsh/pkg/queue"
+	"github.com/KaminurOrynbek/BiznesAsh_lib/queue"
 )
 
 const (

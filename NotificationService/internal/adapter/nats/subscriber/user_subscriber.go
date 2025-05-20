@@ -6,7 +6,7 @@ import (
 	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
 	usecase "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
 
-	"github.com/KaminurOrynbek/BiznesAsh/pkg/queue"
+	"github.com/KaminurOrynbek/BiznesAsh_lib/queue"
 	"log"
 )
 

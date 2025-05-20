@@ -2,8 +2,9 @@ package main
 
 import (
 	"context"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats"
-	natscfg "github.com/KaminurOrynbek/BiznesAsh/internal/config/nats"
+	"github.com/KaminurOrynbek/BiznesAsh_lib/adapter/nats"
+	natscfg "github.com/KaminurOrynbek/BiznesAsh_lib/config/nats"
+	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 	"log"
 	"net"
@@ -11,12 +12,11 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/dao"
-	pgcfg "github.com/KaminurOrynbek/BiznesAsh/internal/config/postgres"
+	"github.com/KaminurOrynbek/BiznesAsh_lib/config/postgres"
 
-	redisclient "github.com/KaminurOrynbek/BiznesAsh/internal/adapter/redis"
-	rediscfg "github.com/KaminurOrynbek/BiznesAsh/internal/config/redis"
+	redisclient "github.com/KaminurOrynbek/BiznesAsh_lib/adapter/redis"
+	rediscfg "github.com/KaminurOrynbek/BiznesAsh_lib/config/redis"
 
 	repoimpl "github.com/KaminurOrynbek/BiznesAsh/internal/repository/Impl"
 	usecaseimpl "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/impl"
@@ -34,15 +34,21 @@ func init() {
 }
 
 func main() {
+	// 2. Init postgres
+	// Загружаем конфигурацию
+	pgConfig := postgres.LoadPostgresConfig()
+	// Создаём подключение к БД
+	db, err := sqlx.Connect("postgres", pgConfig.DSN())
+	if err != nil {
+		log.Fatalf("Failed to connect to Postgres: %v", err)
+	}
+	defer db.Close()
 
-	// 1. Load Config
-	pgConfig := pgcfg.LoadPostgresConfig()
-	redisConfig := rediscfg.LoadRedisConfig()
-
-	// 2. Init DB
-	db := postgres.NewPostgres(pgConfig.DSN())
+	log.Println("Successfully connected to Postgres!")
 
 	// 3. Init Redis
+	redisConfig := rediscfg.LoadRedisConfig()
+
 	redisClient := redisclient.NewRedisClient(redisConfig.Addr, redisConfig.Password, redisConfig.DB)
 	if err := redisClient.Ping(context.Background()); err != nil {
 		log.Fatalf("Redis connection failed: %v", err)
@@ -64,7 +70,8 @@ func main() {
 	commentUsecase := usecaseimpl.NewCommentUsecase(commentRepo)
 	likeUsecase := usecaseimpl.NewLikeUsecase(likeRepo)
 
-	natsConfig := natscfg.LoadConfig()
+	// nats config
+	natsConfig := natscfg.LoadNatsConfig()
 	natsConn := nats.NewConnection(natsConfig)
 	defer natsConn.Close()
 

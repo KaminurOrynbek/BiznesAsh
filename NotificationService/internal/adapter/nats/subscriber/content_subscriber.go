@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats/payloads"
 	usecase "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
-	"github.com/KaminurOrynbek/BiznesAsh/pkg/queue"
+	"github.com/KaminurOrynbek/BiznesAsh_lib/queue"
 	"log"
 
 	"context"
