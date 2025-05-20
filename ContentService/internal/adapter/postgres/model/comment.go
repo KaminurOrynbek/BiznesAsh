@@ -2,11 +2,12 @@ package model
 
 import (
 	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
+	"github.com/google/uuid"
 	"time"
 )
 
 type Comment struct {
-	ID        string    `db:"id"`
+	ID        uuid.UUID `db:"id"`
 	PostID    string    `db:"post_id"`
 	AuthorID  string    `db:"author_id"`
 	Content   string    `db:"content"`
@@ -20,7 +21,7 @@ func (Comment) TableName() string {
 
 func (m *Comment) ToEntity() *entity.Comment {
 	return &entity.Comment{
-		ID:        m.ID,
+		ID:        m.ID.String(),
 		PostID:    m.PostID,
 		AuthorID:  m.AuthorID,
 		Content:   m.Content,
@@ -30,8 +31,10 @@ func (m *Comment) ToEntity() *entity.Comment {
 }
 
 func FromEntityComment(e *entity.Comment) *Comment {
+	uid, _ := uuid.Parse(e.ID)
+
 	return &Comment{
-		ID:        e.ID,
+		ID:        uid,
 		PostID:    e.PostID,
 		AuthorID:  e.AuthorID,
 		Content:   e.Content,

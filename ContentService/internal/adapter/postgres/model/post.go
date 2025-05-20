@@ -3,11 +3,12 @@ package model
 import (
 	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/entity/enum"
+	"github.com/google/uuid"
 	"time"
 )
 
 type Post struct {
-	ID            string        `db:"id"`
+	ID            uuid.UUID     `db:"id"`
 	Title         string        `db:"title"`
 	Content       string        `db:"content"`
 	Type          enum.PostType `db:"type"`
@@ -32,7 +33,7 @@ func (p *Post) ToEntity() *entity.Post {
 	}
 
 	return &entity.Post{
-		ID:            p.ID,
+		ID:            p.ID.String(),
 		Title:         p.Title,
 		Content:       p.Content,
 		Type:          p.Type,
@@ -48,8 +49,10 @@ func (p *Post) ToEntity() *entity.Post {
 }
 
 func FromEntityPost(p *entity.Post) *Post {
+	uid, _ := uuid.Parse(p.ID)
+
 	return &Post{
-		ID:            p.ID,
+		ID:            uid,
 		Title:         p.Title,
 		Content:       p.Content,
 		Type:          p.Type,

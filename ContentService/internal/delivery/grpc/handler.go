@@ -166,30 +166,26 @@ func (h *ContentHandler) ListComments(ctx context.Context, req *pb.ListCommentsR
 
 func (h *ContentHandler) LikePost(ctx context.Context, req *pb.LikePostRequest) (*pb.LikePostResponse, error) {
 	like := &entity.Like{
-		ID:        uuid.NewString(),
-		PostID:    req.PostId,
-		UserID:    req.UserId,
-		IsLike:    true,
-		CreatedAt: time.Now(),
+		PostID: req.PostId,
+		UserID: req.UserId,
 	}
-	if err := h.likeUsecase.LikePost(ctx, like); err != nil {
+	count, err := h.likeUsecase.LikePost(ctx, like)
+	if err != nil {
 		return nil, err
 	}
-	return &pb.LikePostResponse{LikesCount: 1}, nil
+	return &pb.LikePostResponse{LikesCount: count}, nil
 }
 
 func (h *ContentHandler) DislikePost(ctx context.Context, req *pb.DislikePostRequest) (*pb.DislikePostResponse, error) {
 	dislike := &entity.Like{
-		ID:        uuid.NewString(),
-		PostID:    req.PostId,
-		UserID:    req.UserId,
-		IsLike:    false,
-		CreatedAt: time.Now(),
+		PostID: req.PostId,
+		UserID: req.UserId,
 	}
-	if err := h.likeUsecase.DislikePost(ctx, dislike); err != nil {
+	count, err := h.likeUsecase.DislikePost(ctx, dislike)
+	if err != nil {
 		return nil, err
 	}
-	return &pb.DislikePostResponse{DislikesCount: 1}, nil
+	return &pb.DislikePostResponse{DislikesCount: count}, nil
 }
 
 // mappers

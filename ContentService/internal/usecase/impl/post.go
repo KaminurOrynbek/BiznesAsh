@@ -5,6 +5,7 @@ import (
 	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
 	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/repository/interface"
 	usecase "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
+	"github.com/google/uuid"
 
 	"time"
 )
@@ -12,16 +13,19 @@ import (
 type postUsecaseImpl struct {
 	postRepo    _interface.PostRepository
 	commentRepo _interface.CommentRepository
+	likeRepo    _interface.LikeRepository
 }
 
-func NewPostUsecase(postRepo _interface.PostRepository, commentRepo _interface.CommentRepository) usecase.PostUsecase {
+func NewPostUsecase(postRepo _interface.PostRepository, commentRepo _interface.CommentRepository, likeRepo _interface.LikeRepository) usecase.PostUsecase {
 	return usecase.PostUsecase(&postUsecaseImpl{
 		postRepo:    postRepo,
 		commentRepo: commentRepo,
+		likeRepo:    likeRepo,
 	})
 }
 
 func (u *postUsecaseImpl) CreatePost(ctx context.Context, post *entity.Post) error {
+	post.ID = uuid.NewString()
 	post.CreatedAt = time.Now()
 	post.UpdatedAt = post.CreatedAt
 	return u.postRepo.Create(ctx, post)
@@ -54,6 +58,11 @@ func (u *postUsecaseImpl) GetPost(ctx context.Context, id string) (*entity.Post,
 
 	post.CommentsCount = int32(len(comments))
 
+	likes, _ := u.likeRepo.CountLikes(ctx, id)
+	dislikes, _ := u.likeRepo.CountDislikes(ctx, id)
+	post.LikesCount = likes
+	post.DislikesCount = dislikes
+
 	return post, nil
 }
 
@@ -65,11 +74,15 @@ func (u *postUsecaseImpl) ListPosts(ctx context.Context, offset, limit int) ([]*
 
 	for _, post := range posts {
 		comments, err := u.commentRepo.ListByPostID(ctx, post.ID)
-		if err != nil {
-			continue // or log the error
+		if err == nil {
+			post.Comments = comments
+			post.CommentsCount = int32(len(comments))
 		}
-		post.Comments = comments
-		post.CommentsCount = int32(len(comments))
+
+		likes, _ := u.likeRepo.CountLikes(ctx, post.ID)
+		dislikes, _ := u.likeRepo.CountDislikes(ctx, post.ID)
+		post.LikesCount = likes
+		post.DislikesCount = dislikes
 	}
 
 	return posts, nil

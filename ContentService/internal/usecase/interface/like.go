@@ -6,6 +6,6 @@ import (
 )
 
 type LikeUsecase interface {
-	LikePost(ctx context.Context, like *entity.Like) error
-	DislikePost(ctx context.Context, like *entity.Like) error
+	LikePost(ctx context.Context, like *entity.Like) (int32, error)
+	DislikePost(ctx context.Context, like *entity.Like) (int32, error)
 }
