@@ -14,22 +14,32 @@ func NewLikeDAO(db *sqlx.DB) *LikeDAO {
 	return &LikeDAO{db: db}
 }
 
-func (dao *LikeDAO) Like(ctx context.Context, like *model.Like) error {
+func (dao *LikeDAO) Like(ctx context.Context, like *model.Like) (int32, error) {
 	query := `
 		INSERT INTO likes (id, post_id, user_id, is_like, created_at)
 		VALUES (:id, :post_id, :user_id, :is_like, :created_at)
+		ON CONFLICT (post_id, user_id) DO NOTHING;
 	`
 	_, err := dao.db.NamedExecContext(ctx, query, like)
-	return err
+	if err != nil {
+		return 0, err
+	}
+	return dao.CountLikes(ctx, like.PostID)
 }
 
-func (dao *LikeDAO) Dislike(ctx context.Context, dislike *model.Like) error {
+func (dao *LikeDAO) Dislike(ctx context.Context, dislike *model.Like) (int32, error) {
 	query := `
 		INSERT INTO likes (id, post_id, user_id, is_like, created_at)
 		VALUES (:id, :post_id, :user_id, :is_like, :created_at)
+		ON CONFLICT (post_id, user_id) DO NOTHING;
 	`
+
 	_, err := dao.db.NamedExecContext(ctx, query, dislike)
-	return err
+	if err != nil {
+		return 0, err
+	}
+
+	return dao.CountDislikes(ctx, dislike.PostID)
 }
 
 func (dao *LikeDAO) CountLikes(ctx context.Context, postID string) (int32, error) {

@@ -16,12 +16,12 @@ func NewLikeRepository(dao *dao.LikeDAO) _interface.LikeRepository {
 	return &likeRepositoryImpl{dao: dao}
 }
 
-func (r *likeRepositoryImpl) Like(ctx context.Context, like *entity.Like) error {
+func (r *likeRepositoryImpl) Like(ctx context.Context, like *entity.Like) (int32, error) {
 	modelLike := model.FromEntityLike(like)
 	return r.dao.Like(ctx, modelLike)
 }
 
-func (r *likeRepositoryImpl) Dislike(ctx context.Context, like *entity.Like) error {
+func (r *likeRepositoryImpl) Dislike(ctx context.Context, like *entity.Like) (int32, error) {
 	modelDislike := model.FromEntityLike(like)
 	return r.dao.Dislike(ctx, modelDislike)
 }

@@ -6,8 +6,8 @@ import (
 )
 
 type LikeRepository interface {
-	Like(ctx context.Context, like *entity.Like) error
-	Dislike(ctx context.Context, like *entity.Like) error
+	Like(ctx context.Context, like *entity.Like) (int32, error)
+	Dislike(ctx context.Context, like *entity.Like) (int32, error)
 	CountLikes(ctx context.Context, postID string) (int32, error)
 	CountDislikes(ctx context.Context, postID string) (int32, error)
 }

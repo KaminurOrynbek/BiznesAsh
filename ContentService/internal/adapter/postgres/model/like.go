@@ -2,11 +2,12 @@ package model
 
 import (
 	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
+	"github.com/google/uuid"
 	"time"
 )
 
 type Like struct {
-	ID        string    `db:"id"`
+	ID        uuid.UUID `db:"id"`
 	PostID    string    `db:"post_id"`
 	UserID    string    `db:"user_id"`
 	IsLike    bool      `db:"is_like"`
@@ -19,7 +20,7 @@ func (Like) TableName() string {
 
 func (c *Like) ToEntity() *entity.Like {
 	return &entity.Like{
-		ID:        c.ID,
+		ID:        c.ID.String(),
 		PostID:    c.PostID,
 		UserID:    c.UserID,
 		IsLike:    c.IsLike,
@@ -28,8 +29,9 @@ func (c *Like) ToEntity() *entity.Like {
 }
 
 func FromEntityLike(e *entity.Like) *Like {
+	uid, _ := uuid.Parse(e.ID)
 	return &Like{
-		ID:        e.ID,
+		ID:        uid,
 		PostID:    e.PostID,
 		UserID:    e.UserID,
 		IsLike:    e.IsLike,
