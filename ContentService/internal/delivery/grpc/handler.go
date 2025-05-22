@@ -7,6 +7,7 @@ import (
 	"time"
 
 	pb "github.com/KaminurOrynbek/BiznesAsh/auto-proto/content"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/delivery/mapper"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/entity/enum"
 	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
@@ -48,7 +49,7 @@ func (h *ContentHandler) CreatePost(ctx context.Context, req *pb.CreatePostReque
 	if err := h.postUsecase.CreatePost(ctx, post); err != nil {
 		return nil, err
 	}
-	return &pb.PostResponse{Post: convertPostToPB(post)}, nil
+	return &pb.PostResponse{Post: mapper.ConvertPostToPB(post)}, nil
 }
 
 func (h *ContentHandler) UpdatePost(ctx context.Context, req *pb.UpdatePostRequest) (*pb.PostResponse, error) {
@@ -62,7 +63,7 @@ func (h *ContentHandler) UpdatePost(ctx context.Context, req *pb.UpdatePostReque
 	if err := h.postUsecase.UpdatePost(ctx, post); err != nil {
 		return nil, err
 	}
-	return &pb.PostResponse{Post: convertPostToPB(post)}, nil
+	return &pb.PostResponse{Post: mapper.ConvertPostToPB(post)}, nil
 }
 
 func (h *ContentHandler) DeletePost(ctx context.Context, req *pb.PostIdRequest) (*pb.DeleteResponse, error) {
@@ -77,7 +78,7 @@ func (h *ContentHandler) GetPost(ctx context.Context, req *pb.PostIdRequest) (*p
 	if err != nil {
 		return nil, err
 	}
-	return &pb.PostResponse{Post: convertPostToPB(post)}, nil
+	return &pb.PostResponse{Post: mapper.ConvertPostToPB(post)}, nil
 }
 
 func (h *ContentHandler) ListPosts(ctx context.Context, req *pb.ListPostsRequest) (*pb.ListPostsResponse, error) {
@@ -88,7 +89,7 @@ func (h *ContentHandler) ListPosts(ctx context.Context, req *pb.ListPostsRequest
 	}
 	var pbPosts []*pb.Post
 	for _, p := range posts {
-		pbPosts = append(pbPosts, convertPostToPB(p))
+		pbPosts = append(pbPosts, mapper.ConvertPostToPB(p))
 	}
 	return &pb.ListPostsResponse{Posts: pbPosts}, nil
 }
@@ -101,7 +102,7 @@ func (h *ContentHandler) SearchPosts(ctx context.Context, req *pb.SearchPostsReq
 	}
 	var pbPosts []*pb.Post
 	for _, p := range posts {
-		pbPosts = append(pbPosts, convertPostToPB(p))
+		pbPosts = append(pbPosts, mapper.ConvertPostToPB(p))
 	}
 	return &pb.ListPostsResponse{Posts: pbPosts}, nil
 }
@@ -121,7 +122,7 @@ func (h *ContentHandler) CreateComment(ctx context.Context, req *pb.CreateCommen
 	if err := h.commentUsecase.CreateComment(ctx, comment); err != nil {
 		return nil, err
 	}
-	return &pb.CommentResponse{Comment: convertCommentToPB(comment)}, nil
+	return &pb.CommentResponse{Comment: mapper.ConvertCommentToPB(comment)}, nil
 }
 
 func (h *ContentHandler) UpdateComment(ctx context.Context, req *pb.UpdateCommentRequest) (*pb.CommentResponse, error) {
@@ -133,7 +134,7 @@ func (h *ContentHandler) UpdateComment(ctx context.Context, req *pb.UpdateCommen
 	if err := h.commentUsecase.UpdateComment(ctx, comment); err != nil {
 		return nil, err
 	}
-	return &pb.CommentResponse{Comment: convertCommentToPB(comment)}, nil
+	return &pb.CommentResponse{Comment: mapper.ConvertCommentToPB(comment)}, nil
 }
 
 func (h *ContentHandler) DeleteComment(ctx context.Context, req *pb.CommentIdRequest) (*pb.DeleteResponse, error) {
@@ -190,37 +191,4 @@ func (h *ContentHandler) DislikePost(ctx context.Context, req *pb.DislikePostReq
 		return nil, err
 	}
 	return &pb.DislikePostResponse{DislikesCount: 1}, nil
-}
-
-// mappers
-func convertPostToPB(p *entity.Post) *pb.Post {
-	pbComments := make([]*pb.Comment, 0, len(p.Comments))
-	for _, c := range p.Comments {
-		pbComments = append(pbComments, convertCommentToPB(c))
-	}
-	return &pb.Post{
-		Id:            p.ID,
-		Title:         p.Title,
-		Content:       p.Content,
-		Type:          pb.PostType(pb.PostType_value[string(p.Type)]),
-		AuthorId:      p.AuthorID,
-		Published:     p.Published,
-		LikesCount:    p.LikesCount,
-		DislikesCount: p.DislikesCount,
-		CreatedAt:     p.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:     p.UpdatedAt.Format(time.RFC3339),
-		CommentsCount: p.CommentsCount,
-		Comments:      pbComments,
-	}
-}
-
-func convertCommentToPB(c *entity.Comment) *pb.Comment {
-	return &pb.Comment{
-		Id:        c.ID,
-		PostId:    c.PostID,
-		AuthorId:  c.AuthorID,
-		Content:   c.Content,
-		CreatedAt: timestamppb.New(c.CreatedAt),
-		UpdatedAt: timestamppb.New(c.UpdatedAt),
-	}
 }

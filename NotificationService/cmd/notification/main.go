@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats/subscriber"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/dao"
 	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
@@ -82,15 +81,6 @@ func main() {
 			log.Println("Error closing NATS:", err)
 		}
 	}()
-
-	// Subscribe to "user.registered" subject
-	err = natsQueue.Subscribe("user.registered", func(data []byte) {
-		fmt.Println("Received user.registered:", string(data))
-	})
-
-	if err != nil {
-		log.Fatalf("Error subscribing to NATS subject: %v", err)
-	}
 
 	grpcPort := os.Getenv("GRPC_PORT")
 	if grpcPort == "" {
