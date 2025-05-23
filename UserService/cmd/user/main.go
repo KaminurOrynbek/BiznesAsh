@@ -1,6 +1,7 @@
 package main
 
 import (
+	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
 	"os"
@@ -67,6 +68,8 @@ func main() {
 
 	// Register gRPC service
 	pb.RegisterUserServiceServer(grpcServer, userServer)
+
+	reflection.Register(grpcServer)
 
 	// Start listener
 	listener, err := net.Listen("tcp", ":"+grpcPort)

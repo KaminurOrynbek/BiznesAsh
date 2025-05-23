@@ -2,6 +2,7 @@ package publisher
 
 import (
 	"encoding/json"
+	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/nats/payloads"
 	"github.com/KaminurOrynbek/BiznesAsh_lib/queue"
 	"log"
 )
@@ -13,7 +14,6 @@ const (
 	UserPromotedToAdminSubject     = "user.promoted_to_admin"
 	UserDemotedSubject             = "user.demoted"
 	UserBannedSubject              = "user.banned"
-	ReportCreatedSubject           = "report.created"
 )
 
 type UserPublisher struct {
@@ -33,46 +33,26 @@ func (p *UserPublisher) publish(subject string, payload any) error {
 	return p.queue.Publish(subject, data)
 }
 
-func (p *UserPublisher) PublishUserRegistered(userId, email string) error {
-	return p.publish(UserRegisteredSubject, map[string]string{
-		"user_id": userId,
-		"email":   email,
-	})
+func (p *UserPublisher) PublishUserRegistered(payload payloads.UserEventPayload) error {
+	return p.publish(UserRegisteredSubject, payload)
 }
 
-func (p *UserPublisher) PublishUserDeleted(userId string) error {
-	return p.publish(UserDeletedSubject, map[string]string{
-		"user_id": userId,
-	})
+func (p *UserPublisher) PublishUserDeleted(payload payloads.UserEventPayload) error {
+	return p.publish(UserDeletedSubject, payload)
 }
 
-func (p *UserPublisher) PublishUserPromotedToModerator(userId string) error {
-	return p.publish(UserPromotedToModeratorSubject, map[string]string{
-		"user_id": userId,
-	})
+func (p *UserPublisher) PublishUserPromotedToModerator(payload payloads.UserEventPayload) error {
+	return p.publish(UserPromotedToModeratorSubject, payload)
 }
 
-func (p *UserPublisher) PublishUserPromotedToAdmin(userId string) error {
-	return p.publish(UserPromotedToAdminSubject, map[string]string{
-		"user_id": userId,
-	})
+func (p *UserPublisher) PublishUserPromotedToAdmin(payload payloads.UserEventPayload) error {
+	return p.publish(UserPromotedToAdminSubject, payload)
 }
 
-func (p *UserPublisher) PublishUserDemoted(userId string) error {
-	return p.publish(UserDemotedSubject, map[string]string{
-		"user_id": userId,
-	})
+func (p *UserPublisher) PublishUserDemoted(payload payloads.UserEventPayload) error {
+	return p.publish(UserDemotedSubject, payload)
 }
 
-func (p *UserPublisher) PublishUserBanned(userId string, reason string) error {
-	return p.publish(UserBannedSubject, map[string]string{
-		"user_id": userId,
-		"reason":  reason,
-	})
-}
-
-func (p *UserPublisher) PublishReportCreated(reportId string) error {
-	return p.publish(ReportCreatedSubject, map[string]string{
-		"report_id": reportId,
-	})
+func (p *UserPublisher) PublishUserBanned(payload payloads.UserEventPayload) error {
+	return p.publish(UserBannedSubject, payload)
 }

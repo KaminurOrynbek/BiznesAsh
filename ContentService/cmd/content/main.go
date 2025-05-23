@@ -4,14 +4,18 @@ import (
 	"context"
 	"github.com/KaminurOrynbek/BiznesAsh_lib/adapter/nats"
 	natscfg "github.com/KaminurOrynbek/BiznesAsh_lib/config/nats"
+	"github.com/KaminurOrynbek/BiznesAsh_lib/queue"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 	"log"
 	"net"
 	"os"
 
+	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats/publisher"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/dao"
 	"github.com/KaminurOrynbek/BiznesAsh_lib/config/postgres"
 
@@ -66,13 +70,18 @@ func main() {
 	likeRepo := repoimpl.NewLikeRepository(likeDAO)
 
 	// 6. Init Usecases
-	postUsecase := usecaseimpl.NewPostUsecase(postRepo, commentRepo)
+	postUsecase := usecaseimpl.NewPostUsecase(postRepo, commentRepo, likeRepo)
 	commentUsecase := usecaseimpl.NewCommentUsecase(commentRepo)
-	likeUsecase := usecaseimpl.NewLikeUsecase(likeRepo)
 
-	// nats config
+	// nats config (MOVED BEFORE using contentPublisher)
 	natsConfig := natscfg.LoadNatsConfig()
 	natsConn := nats.NewConnection(natsConfig)
+	natsQueue := queue.NewNATSQueue(natsConn)
+
+	contentPublisher := publisher.NewContentPublisher(natsQueue)
+
+	likeUsecase := usecaseimpl.NewLikeUsecase(likeRepo, contentPublisher)
+
 	defer natsConn.Close()
 
 	// 7. Init gRPC handler

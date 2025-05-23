@@ -2,6 +2,7 @@ package impl
 
 import (
 	"context"
+	"fmt"
 	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
 	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/repository/interface"
 	usecase "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
@@ -37,7 +38,35 @@ func (u *notificationUsecase) NotifySystemMessage(ctx context.Context, n *entity
 	return u.saveTypedNotification(ctx, n, "SYSTEM")
 }
 
+func (u *notificationUsecase) NotifyPostLike(ctx context.Context, n *entity.Notification) error {
+	return u.saveTypedNotification(ctx, n, "POST_LIKE")
+}
+
+func (u *notificationUsecase) NotifyCommentLike(ctx context.Context, n *entity.Notification) error {
+	return u.saveTypedNotification(ctx, n, "COMMENT_LIKE")
+}
+
 func (u *notificationUsecase) saveTypedNotification(ctx context.Context, n *entity.Notification, typ string) error {
+	// Validate user exists
+	exists, err := u.repo.UserExists(ctx, n.UserID)
+	if err != nil {
+		return fmt.Errorf("failed to verify user: %w", err)
+	}
+	if !exists {
+		return fmt.Errorf("user with ID %s does not exist", n.UserID)
+	}
+
+	//Validate post exists
+	if n.PostID != nil && *n.PostID != "" {
+		exists, err := u.repo.PostExists(ctx, *n.PostID)
+		if err != nil {
+			return fmt.Errorf("failed to verify post: %w", err)
+		}
+		if !exists {
+			return fmt.Errorf("post with ID %s does not exist", n.PostID)
+		}
+	}
+
 	if n.ID == "" {
 		n.ID = uuid.NewString()
 	}

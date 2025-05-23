@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/nats/payloads"
 	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/nats/publisher"
 	"log"
 	"os"
@@ -11,6 +12,7 @@ import (
 	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/entity/enum"
 	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/repository/RepoInterfaces"
 	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/usecase/Usecase_Interfaces"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
@@ -49,7 +51,11 @@ func (u *userUsecaseImpl) Register(email, username, password string) (*entity.Us
 		return nil, errors.Wrap(err, "failed to create user")
 	}
 
-	err = u.publisher.PublishUserRegistered(createdUser.ID, createdUser.Email)
+	err = u.publisher.PublishUserRegistered(payloads.UserEventPayload{
+		UserID: createdUser.ID,
+		Email:  createdUser.Email,
+	})
+
 	if err != nil {
 		log.Printf("Failed to publish user.registered: %v", err)
 	}
@@ -162,7 +168,10 @@ func (u *userUsecaseImpl) PromoteToAdmin(currentUserID, targetUserID string) (*e
 		return nil, errors.Wrap(err, "failed to promote to admin")
 	}
 
-	err = u.publisher.PublishUserPromotedToAdmin(targetUserID)
+	err = u.publisher.PublishUserPromotedToAdmin(payloads.UserEventPayload{
+		UserID: targetUserID,
+	})
+
 	if err != nil {
 		log.Printf("Failed to publish user.promoted_to_admin event: %v", err)
 	}
@@ -202,19 +211,26 @@ func (u *userUsecaseImpl) DeleteAccount(currentUserID, targetUserID string) erro
 		return errors.New("only admins can delete accounts")
 	}
 
+	targetUser, err := u.userRepo.GetUserByID(context.Background(), targetUserID)
+	if err != nil {
+		return errors.Wrap(err, "failed to get target user")
+	}
+
 	err = u.userRepo.DeleteUser(context.Background(), targetUserID)
 	if err != nil {
 		return errors.Wrap(err, "failed to delete user")
 	}
 
-	err = u.publisher.PublishUserDeleted(targetUserID)
+	err = u.publisher.PublishUserDeleted(payloads.UserEventPayload{
+		UserID: targetUser.ID,
+		Email:  targetUser.Email,
+	})
 	if err != nil {
 		log.Printf("Failed to publish user.deleted event: %v", err)
 	}
 
 	return nil
 }
-
 func (u *userUsecaseImpl) ListUsers(searchQuery string) ([]*entity.User, error) {
 	filter := entity.UserFilter{
 		SearchQuery: searchQuery,
@@ -248,7 +264,12 @@ func (u *userUsecaseImpl) BanUser(currentUserId string, targetUserId string) err
 		return errors.Wrap(err, "failed to ban user")
 	}
 
-	err = u.publisher.PublishUserBanned(targetUserId, "Rule violation or other reason")
+	err = u.publisher.PublishUserBanned(payloads.UserEventPayload{
+		UserID: targetUser.ID,
+		Email:  targetUser.Email,
+		Reason: "Rule violation or other reason",
+	})
+
 	if err != nil {
 		log.Printf("Failed to publish user.banned event: %v", err)
 	}

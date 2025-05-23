@@ -19,3 +19,11 @@ func NewNotificationRepository(dao *dao.NotificationDAO) repo.NotificationReposi
 func (r *notificationRepositoryImpl) SaveNotification(ctx context.Context, notification *entity.Notification) error {
 	return r.dao.Save(ctx, model.FromEntityNotification(notification))
 }
+
+func (r *notificationRepositoryImpl) UserExists(ctx context.Context, userID string) (bool, error) {
+	return r.dao.UserExists(ctx, userID)
+}
+
+func (r *notificationRepositoryImpl) PostExists(ctx context.Context, postID string) (bool, error) {
+	return r.dao.PostExists(ctx, postID)
+}

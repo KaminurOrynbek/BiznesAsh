@@ -1,8 +1,12 @@
-CREATE TABLE IF NOT EXISTS likes (
-                                     id TEXT PRIMARY KEY,
-                                     post_id TEXT NOT NULL,
-                                     user_id TEXT NOT NULL,
-                                     is_like BOOLEAN NOT NULL,
-                                     created_at TIMESTAMP NOT NULL,
-                                     FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
-    );
+CREATE TABLE likes (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    post_id UUID,
+    comment_id UUID,
+    is_like BOOLEAN NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    UNIQUE (post_id, user_id),
+    UNIQUE (comment_id, user_id)
+
+);
+

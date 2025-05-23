@@ -71,6 +71,28 @@ func (s *ContentSubscriber) SubscribePostReported() error {
 	})
 }
 
+func (s *ContentSubscriber) SubscribePostLiked() error {
+	return s.queue.Subscribe("post.liked", func(msg []byte) {
+		var payload payloads.PostLiked
+		if err := json.Unmarshal(msg, &payload); err != nil {
+			log.Printf("Failed to parse PostLiked: %v", err)
+			return
+		}
+		s.handlePostLiked(payload)
+	})
+}
+
+func (s *ContentSubscriber) SubscribeCommentLiked() error {
+	return s.queue.Subscribe("comment.liked", func(msg []byte) {
+		var payload payloads.CommentLiked
+		if err := json.Unmarshal(msg, &payload); err != nil {
+			log.Printf("Failed to parse CommentLiked: %v", err)
+			return
+		}
+		s.handleCommentLiked(payload)
+	})
+}
+
 func (s *ContentSubscriber) handlePostCreated(payload payloads.PostCreated) {
 	log.Printf("New post created: %s by author: %s", payload.Title, payload.AuthorID)
 	// Создаем Notification
@@ -129,5 +151,31 @@ func (s *ContentSubscriber) handlePostReported(payload payloads.PostReported) {
 	err := s.notificationUsecase.SendReportNotification(context.Background(), notification)
 	if err != nil {
 		log.Printf("Error sending report notification: %v", err)
+	}
+}
+
+func (s *ContentSubscriber) handlePostLiked(payload payloads.PostLiked) {
+	log.Printf("Post liked: %s (notify user %s)", payload.PostID, payload.UserID)
+	notification := &entity.Notification{
+		UserID:  payload.UserID,
+		Message: "Your post got a new like!",
+		PostID:  &payload.PostID,
+	}
+	err := s.notificationUsecase.NotifyPostLike(context.Background(), notification)
+	if err != nil {
+		log.Printf("Failed to notify post like: %v", err)
+	}
+}
+
+func (s *ContentSubscriber) handleCommentLiked(payload payloads.CommentLiked) {
+	log.Printf("Comment liked: %s (notify user %s)", payload.CommentID, payload.UserID)
+	notification := &entity.Notification{
+		UserID:    payload.UserID,
+		Message:   "Your comment got a new like!",
+		CommentID: &payload.CommentID,
+	}
+	err := s.notificationUsecase.NotifyCommentLike(context.Background(), notification)
+	if err != nil {
+		log.Printf("Failed to notify comment like: %v", err)
 	}
 }

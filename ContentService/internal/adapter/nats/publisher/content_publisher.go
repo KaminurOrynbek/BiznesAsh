@@ -13,6 +13,8 @@ const (
 	PostUpdatedSubject    = "post.updated"
 	CommentCreatedSubject = "comment.created"
 	PostReportedSubject   = "post.reported"
+	PostLikedSubject      = "post.liked"
+	CommentLikedSubject   = "comment.liked"
 )
 
 type ContentPublisher struct {
@@ -26,10 +28,17 @@ func NewContentPublisher(q queue.MessageQueue) *ContentPublisher {
 func (p *ContentPublisher) publish(subject string, payload any) error {
 	data, err := json.Marshal(payload)
 	if err != nil {
-		log.Printf("Failed to marshal event payload: %v", err)
+		log.Printf("[PUBLISH ERROR] Failed to marshal payload for subject %s: %v", subject, err)
 		return err
 	}
-	return p.queue.Publish(subject, data)
+
+	log.Printf("[PUBLISH] Subject: %s | Payload: %s", subject, string(data))
+
+	err = p.queue.Publish(subject, data)
+	if err != nil {
+		log.Printf("[PUBLISH ERROR] Failed to publish to subject %s: %v", subject, err)
+	}
+	return err
 }
 
 func (p *ContentPublisher) PublishPostCreated(payload payloads.PostCreated) error {
@@ -46,4 +55,12 @@ func (p *ContentPublisher) PublishCommentCreated(payload payloads.CommentCreated
 
 func (p *ContentPublisher) PublishPostReported(payload payloads.PostReported) error {
 	return p.publish(PostReportedSubject, payload)
+}
+
+func (p *ContentPublisher) PublishPostLiked(payload payloads.PostLiked) error {
+	return p.publish(PostLikedSubject, payload)
+}
+
+func (p *ContentPublisher) PublishCommentLiked(payload payloads.CommentLiked) error {
+	return p.publish(CommentLikedSubject, payload)
 }

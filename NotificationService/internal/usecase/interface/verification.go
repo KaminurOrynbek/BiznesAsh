@@ -7,6 +7,4 @@ import (
 
 type VerificationUsecase interface {
 	SendVerificationEmail(ctx context.Context, email *entity.Email) error
-	ResendVerificationCode(ctx context.Context, userID string) error
-	VerifyEmail(ctx context.Context, userID, code string) (bool, error)
 }

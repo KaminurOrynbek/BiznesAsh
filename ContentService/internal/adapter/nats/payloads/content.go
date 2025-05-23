@@ -23,3 +23,13 @@ type PostReported struct {
 	ReporterID string `json:"reporter_id"`
 	Reason     string `json:"reason"`
 }
+
+type PostLiked struct {
+	UserID string `json:"user_id"`
+	PostID string `json:"post_id"`
+}
+
+type CommentLiked struct {
+	UserID    string `json:"user_id"`
+	CommentID string `json:"comment_id"`
+}

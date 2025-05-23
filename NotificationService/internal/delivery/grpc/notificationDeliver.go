@@ -34,7 +34,7 @@ func (d *NotificationDelivery) SendWelcomeEmail(ctx context.Context, req *pb.Ema
 
 func (d *NotificationDelivery) SendCommentNotification(ctx context.Context, req *pb.CommentNotification) (*pb.NotificationResponse, error) {
 	notification := &entity.Notification{
-		UserID:    req.GetEmail(),
+		UserID:    req.GetUserId(),
 		PostID:    ptr(req.GetPostId()),
 		CommentID: ptr(req.GetCommentText()),
 		Message:   req.GetCommentText(),
@@ -49,7 +49,7 @@ func (d *NotificationDelivery) SendCommentNotification(ctx context.Context, req 
 
 func (d *NotificationDelivery) SendReportNotification(ctx context.Context, req *pb.ReportNotification) (*pb.NotificationResponse, error) {
 	notification := &entity.Notification{
-		UserID:  req.GetEmail(),
+		UserID:  req.GetUserId(),
 		PostID:  ptr(req.GetPostId()),
 		Message: req.GetReason(),
 		Type:    "REPORT",
@@ -63,7 +63,7 @@ func (d *NotificationDelivery) SendReportNotification(ctx context.Context, req *
 
 func (d *NotificationDelivery) NotifyNewPost(ctx context.Context, req *pb.NewPostNotification) (*pb.NotificationResponse, error) {
 	notification := &entity.Notification{
-		UserID:  req.GetEmail(),
+		UserID:  req.GetUserId(),
 		Message: req.GetPostTitle(),
 		Type:    "NEW_POST",
 	}
@@ -76,7 +76,7 @@ func (d *NotificationDelivery) NotifyNewPost(ctx context.Context, req *pb.NewPos
 
 func (d *NotificationDelivery) NotifyPostUpdate(ctx context.Context, req *pb.PostUpdateNotification) (*pb.NotificationResponse, error) {
 	notification := &entity.Notification{
-		UserID:  req.GetEmail(),
+		UserID:  req.GetUserId(),
 		PostID:  ptr(req.GetPostId()),
 		Message: req.GetUpdateSummary(),
 		Type:    "POST_UPDATE",
@@ -90,7 +90,7 @@ func (d *NotificationDelivery) NotifyPostUpdate(ctx context.Context, req *pb.Pos
 
 func (d *NotificationDelivery) NotifySystemMessage(ctx context.Context, req *pb.SystemMessageRequest) (*pb.NotificationResponse, error) {
 	notification := &entity.Notification{
-		UserID:  req.GetEmail(),
+		UserID:  req.GetUserId(),
 		Message: req.GetMessage(),
 		Type:    "SYSTEM",
 	}
@@ -112,22 +112,6 @@ func (d *NotificationDelivery) SendVerificationEmail(ctx context.Context, req *p
 		return nil, err
 	}
 	return &pb.NotificationResponse{Success: true, Message: "Verification Email Sent"}, nil
-}
-
-func (d *NotificationDelivery) VerifyEmail(ctx context.Context, req *pb.VerificationCode) (*pb.NotificationResponse, error) {
-	success, err := d.usecase.VerifyEmail(ctx, req.GetEmail(), req.GetCode())
-	if err != nil {
-		return nil, err
-	}
-	return &pb.NotificationResponse{Success: success, Message: "Verification Result"}, nil
-}
-
-func (d *NotificationDelivery) ResendVerificationCode(ctx context.Context, req *pb.UserID) (*pb.NotificationResponse, error) {
-	err := d.usecase.ResendVerificationCode(ctx, req.GetUserId())
-	if err != nil {
-		return nil, err
-	}
-	return &pb.NotificationResponse{Success: true, Message: "Verification code resent"}, nil
 }
 
 func (d *NotificationDelivery) SubscribeToUpdates(ctx context.Context, req *pb.UserID) (*pb.NotificationResponse, error) {
@@ -157,4 +141,28 @@ func (d *NotificationDelivery) GetSubscriptions(ctx context.Context, req *pb.Use
 // small helper function
 func ptr(s string) *string {
 	return &s
+}
+
+func (s *NotificationDelivery) NotifyPostLike(ctx context.Context, req *pb.PostLikeNotification) (*pb.NotificationResponse, error) {
+	err := s.usecase.NotifyPostLike(ctx, &entity.Notification{
+		UserID:  req.UserId,
+		PostID:  ptr(req.PostId),
+		Message: "Your post got a new like!",
+	})
+	if err != nil {
+		return &pb.NotificationResponse{Success: false, Message: err.Error()}, nil
+	}
+	return &pb.NotificationResponse{Success: true, Message: "Like notification sent"}, nil
+}
+
+func (s *NotificationDelivery) NotifyCommentLike(ctx context.Context, req *pb.CommentLikeNotification) (*pb.NotificationResponse, error) {
+	err := s.usecase.NotifyCommentLike(ctx, &entity.Notification{
+		UserID:    req.UserId,
+		CommentID: ptr(req.CommentId),
+		Message:   "Your comment got a new like!",
+	})
+	if err != nil {
+		return &pb.NotificationResponse{Success: false, Message: err.Error()}, nil
+	}
+	return &pb.NotificationResponse{Success: true, Message: "Comment like notification sent"}, nil
 }

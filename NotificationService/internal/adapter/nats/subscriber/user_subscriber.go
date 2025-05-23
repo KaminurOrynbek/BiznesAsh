@@ -3,40 +3,35 @@ package subscriber
 import (
 	"context"
 	"encoding/json"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
-	usecase "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
-
-	"github.com/KaminurOrynbek/BiznesAsh_lib/queue"
 	"log"
+
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats/payloads"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
+	"github.com/KaminurOrynbek/BiznesAsh_lib/queue"
 )
 
-type UserEventPayload struct {
-	UserID string `json:"user_id"`
-	Email  string `json:"email,omitempty"`
-	Role   string `json:"role,omitempty"`
-	Reason string `json:"reason,omitempty"`
-}
-
-func InitUserSubscribers(q queue.MessageQueue, uc usecase.CombinedUsecase) {
-	subscribe := func(subject string, handler func(context.Context, UserEventPayload)) {
+func InitUserSubscribers(q queue.MessageQueue, uc _interface.CombinedUsecase) {
+	subscribe := func(subject string, handler func(context.Context, payloads.UserEventPayload)) {
 		err := q.Subscribe(subject, func(data []byte) {
-			var payload UserEventPayload
+			var payload payloads.UserEventPayload
 			if err := json.Unmarshal(data, &payload); err != nil {
-				log.Printf("Failed to parse payload for %s: %v", subject, err)
+				log.Printf("❌ Failed to parse payload for %s: %v", subject, err)
 				return
 			}
 			handler(context.Background(), payload)
 		})
 		if err != nil {
-			log.Printf("Failed to subscribe to %s: %v", subject, err)
+			log.Printf("❌ Failed to subscribe to %s: %v", subject, err)
 		}
 	}
 
-	subscribe("user.registered", func(ctx context.Context, payload UserEventPayload) {
+	// Handle user registration
+	subscribe("user.registered", func(ctx context.Context, payload payloads.UserEventPayload) {
 		_ = uc.SendVerificationEmail(ctx, &entity.Email{
 			To:      payload.Email,
 			Subject: "Please verify your email",
-			Body:    "Welcome! Your verification code will arrive shortly.",
+			Body:    "Welcome! Your verification code will arrive shortly.", // remove
 		})
 		_ = uc.SendEmail(ctx, &entity.Email{
 			To:      payload.Email,
@@ -45,7 +40,8 @@ func InitUserSubscribers(q queue.MessageQueue, uc usecase.CombinedUsecase) {
 		})
 	})
 
-	subscribe("user.deleted", func(ctx context.Context, payload UserEventPayload) {
+	// Handle user deletion
+	subscribe("user.deleted", func(ctx context.Context, payload payloads.UserEventPayload) {
 		_ = uc.SendEmail(ctx, &entity.Email{
 			To:      payload.Email,
 			Subject: "Account Deletion Confirmation",
@@ -53,27 +49,31 @@ func InitUserSubscribers(q queue.MessageQueue, uc usecase.CombinedUsecase) {
 		})
 	})
 
-	subscribe("user.promoted_to_moderator", func(ctx context.Context, payload UserEventPayload) {
+	// Handle promotions
+	subscribe("user.promoted_to_moderator", func(ctx context.Context, payload payloads.UserEventPayload) {
 		_ = uc.NotifySystemMessage(ctx, &entity.Notification{
 			UserID:  payload.UserID,
 			Message: "You were promoted to Moderator.",
 		})
 	})
-	subscribe("user.promoted_to_admin", func(ctx context.Context, payload UserEventPayload) {
+
+	subscribe("user.promoted_to_admin", func(ctx context.Context, payload payloads.UserEventPayload) {
 		_ = uc.NotifySystemMessage(ctx, &entity.Notification{
 			UserID:  payload.UserID,
 			Message: "You were promoted to Admin.",
 		})
 	})
 
-	subscribe("user.demoted", func(ctx context.Context, payload UserEventPayload) {
+	// Handle demotions
+	subscribe("user.demoted", func(ctx context.Context, payload payloads.UserEventPayload) {
 		_ = uc.NotifySystemMessage(ctx, &entity.Notification{
 			UserID:  payload.UserID,
 			Message: "You have been demoted to User.",
 		})
 	})
 
-	subscribe("user.banned", func(ctx context.Context, payload UserEventPayload) {
+	// Handle bans
+	subscribe("user.banned", func(ctx context.Context, payload payloads.UserEventPayload) {
 		_ = uc.SendEmail(ctx, &entity.Email{
 			To:      payload.Email,
 			Subject: "Account Banned",

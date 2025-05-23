@@ -10,7 +10,7 @@ import (
 func ConvertPostToPB(p *entity.Post) *pb.Post {
 	pbComments := make([]*pb.Comment, 0, len(p.Comments))
 	for _, c := range p.Comments {
-		pbComments = append(pbComments, convertCommentToPB(c))
+		pbComments = append(pbComments, ConvertCommentToPB(c))
 	}
 
 	return &pb.Post{

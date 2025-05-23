@@ -188,3 +188,14 @@ func (h *ContentHandler) DislikePost(ctx context.Context, req *pb.DislikePostReq
 	}
 	return &pb.DislikePostResponse{DislikesCount: count}, nil
 }
+
+func (h *ContentHandler) LikeComment(ctx context.Context, req *pb.LikeCommentRequest) (*pb.LikeCommentResponse, error) {
+	count, err := h.likeUsecase.LikeComment(ctx, &entity.Like{
+		UserID:    req.UserId,
+		CommentID: req.CommentId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.LikeCommentResponse{LikesCount: count}, nil
+}

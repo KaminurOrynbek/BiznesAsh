@@ -10,6 +10,7 @@ import (
 	"github.com/KaminurOrynbek/BiznesAsh_lib/config/service"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -20,6 +21,7 @@ import (
 	delivery "github.com/KaminurOrynbek/BiznesAsh/internal/delivery/grpc"
 	repo "github.com/KaminurOrynbek/BiznesAsh/internal/repository/impl"
 	usecaseImpl "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/impl"
+
 	"github.com/KaminurOrynbek/BiznesAsh_lib/queue"
 )
 
@@ -71,6 +73,18 @@ func main() {
 
 	// NATS Queue initialization
 	natsQueue := queue.NewNATSQueue(natsConn)
+
+	// Content Subscriber Setup
+	contentSubscriber := subscriber.NewContentSubscriber(natsQueue, combined.NotificationUsecase)
+
+	_ = contentSubscriber.SubscribePostCreated()
+	_ = contentSubscriber.SubscribePostUpdated()
+	_ = contentSubscriber.SubscribeCommentCreated()
+	_ = contentSubscriber.SubscribePostReported()
+
+	// NEW Methods
+	_ = contentSubscriber.SubscribePostLiked()
+	_ = contentSubscriber.SubscribeCommentLiked()
 
 	// Subscribe to NATS events
 	subscriber.InitUserSubscribers(natsQueue, combined)

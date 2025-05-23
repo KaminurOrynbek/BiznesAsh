@@ -33,3 +33,12 @@ func (r *likeRepositoryImpl) CountLikes(ctx context.Context, postID string) (int
 func (r *likeRepositoryImpl) CountDislikes(ctx context.Context, postID string) (int32, error) {
 	return r.dao.CountDislikes(ctx, postID)
 }
+
+func (r *likeRepositoryImpl) LikeComment(ctx context.Context, like *entity.Like) (int32, error) {
+	modelLike := model.FromEntityLike(like)
+	return r.dao.LikeComment(ctx, modelLike)
+}
+
+func (r *likeRepositoryImpl) CountCommentLikes(ctx context.Context, commentID string) (int32, error) {
+	return r.dao.CountCommentLikes(ctx, commentID)
+}
