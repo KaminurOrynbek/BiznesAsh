@@ -24,10 +24,12 @@ import (
 )
 
 func main() {
-	// Load .env if exists
-	err := godotenv.Load()
-	if err != nil {
-		log.Printf("Warning: Could not load .env file: %v", err)
+	// Try to load .env file, but don't fail if it doesn't exist
+	if err := godotenv.Load(); err != nil {
+		// Only log if it's not a "file not found" error
+		if !os.IsNotExist(err) {
+			log.Printf("Warning: Error loading .env file: %v", err)
+		}
 	}
 
 	// Init Postgres

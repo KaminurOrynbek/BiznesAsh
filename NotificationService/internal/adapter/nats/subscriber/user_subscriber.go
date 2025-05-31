@@ -31,7 +31,7 @@ func InitUserSubscribers(q queue.MessageQueue, uc _interface.CombinedUsecase) {
 		_ = uc.SendVerificationEmail(ctx, &entity.Email{
 			To:      payload.Email,
 			Subject: "Please verify your email",
-			Body:    "Welcome! Your verification code will arrive shortly.", // remove
+			Body:    "Welcome! Your verification code will arrive shortly.", 
 		})
 		_ = uc.SendEmail(ctx, &entity.Email{
 			To:      payload.Email,

@@ -75,10 +75,9 @@ func (dao *PostDAO) List(ctx context.Context, offset, limit int) ([]*model.Post,
 		SELECT id, title, content, type, author_id, created_at, updated_at, published, likes_count, dislikes_count, comments_count
 		FROM posts
 		ORDER BY created_at DESC
-		OFFSET $1 LIMIT $2
 	`
 	var posts []*model.Post
-	err := dao.db.SelectContext(ctx, &posts, query, offset, limit)
+	err := dao.db.SelectContext(ctx, &posts, query)
 	return posts, err
 }
 

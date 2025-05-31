@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 0000
+      POSTGRES_DB: biznesAsh
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - fnet
+
+  
+
+  apigateway:
+    build:
+      context: ./APIGateway
+      dockerfile: Dockerfile
+    container_name: apigateway-service
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./APIGateway/.env
+    depends_on:
+      - userservice
+    networks:
+      - fnet
+
+volumes:
+  pgdata:
+
+networks:
+  fnet:
+    external: true

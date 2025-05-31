@@ -13,7 +13,7 @@ import (
 
 type ContentSubscriber struct {
 	queue               queue.MessageQueue
-	notificationUsecase usecase.NotificationUsecase // Добавляем NotificationUsecase
+	notificationUsecase usecase.NotificationUsecase 
 }
 
 func NewContentSubscriber(q queue.MessageQueue, ns usecase.NotificationUsecase) *ContentSubscriber {
@@ -95,13 +95,11 @@ func (s *ContentSubscriber) SubscribeCommentLiked() error {
 
 func (s *ContentSubscriber) handlePostCreated(payload payloads.PostCreated) {
 	log.Printf("New post created: %s by author: %s", payload.Title, payload.AuthorID)
-	// Создаем Notification
 	notification := &entity.Notification{
 		UserID:  payload.AuthorID,
 		Message: "A new post was created: " + payload.Title,
 		PostID:  &payload.PostID,
 	}
-	// Вызов метода уведомлений
 	err := s.notificationUsecase.NotifyNewPost(context.Background(), notification)
 	if err != nil {
 		log.Printf("Error sending new post notification: %v", err)
@@ -110,13 +108,11 @@ func (s *ContentSubscriber) handlePostCreated(payload payloads.PostCreated) {
 
 func (s *ContentSubscriber) handlePostUpdated(payload payloads.PostUpdated) {
 	log.Printf("Post updated: %s", payload.PostID)
-	// Создаем Notification
 	notification := &entity.Notification{
-		UserID:  payload.AuthorID, // Предполагаем, что есть поле AuthorID
+		UserID:  payload.AuthorID,
 		Message: "Your post has been updated.",
 		PostID:  &payload.PostID,
 	}
-	// Вызов метода уведомлений
 	err := s.notificationUsecase.NotifyPostUpdate(context.Background(), notification)
 	if err != nil {
 		log.Printf("Error sending post update notification: %v", err)
@@ -125,14 +121,12 @@ func (s *ContentSubscriber) handlePostUpdated(payload payloads.PostUpdated) {
 
 func (s *ContentSubscriber) handleCommentCreated(payload payloads.CommentCreated) {
 	log.Printf("New comment created on post: %s by user: %s", payload.PostID, payload.UserID)
-	// Создаем Notification
 	notification := &entity.Notification{
 		UserID:    payload.UserID,
 		Message:   "New comment created on your post.",
 		PostID:    &payload.PostID,
 		CommentID: &payload.CommentID,
 	}
-	// Вызов метода уведомлений
 	err := s.notificationUsecase.SendCommentNotification(context.Background(), notification)
 	if err != nil {
 		log.Printf("Error sending comment notification: %v", err)
@@ -141,13 +135,11 @@ func (s *ContentSubscriber) handleCommentCreated(payload payloads.CommentCreated
 
 func (s *ContentSubscriber) handlePostReported(payload payloads.PostReported) {
 	log.Printf("Post reported: %s by reporter: %s, reason: %s", payload.PostID, payload.ReporterID, payload.Reason)
-	// Создаем Notification
 	notification := &entity.Notification{
 		UserID:  payload.ReporterID,
 		Message: "A post has been reported: " + payload.PostID,
 		PostID:  &payload.PostID,
 	}
-	// Вызов метода уведомлений
 	err := s.notificationUsecase.SendReportNotification(context.Background(), notification)
 	if err != nil {
 		log.Printf("Error sending report notification: %v", err)

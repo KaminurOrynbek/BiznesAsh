@@ -44,12 +44,14 @@ func (dao *LikeDAO) Dislike(ctx context.Context, dislike *model.Like) (int32, er
 
 func (dao *LikeDAO) CountLikes(ctx context.Context, postID string) (int32, error) {
 	query := `
-		SELECT COUNT(*) FROM likes WHERE post_id = $1 AND is_like = true
+		SELECT COUNT(*) FROM likes 
+		WHERE post_id = $1 AND is_like = true
 	`
 	var count int32
 	err := dao.db.GetContext(ctx, &count, query, postID)
 	return count, err
 }
+
 
 func (dao *LikeDAO) CountDislikes(ctx context.Context, postID string) (int32, error) {
 	query := `

@@ -27,7 +27,7 @@ func ToUserDB(user *entity.User) *UserDB {
 		Email:     user.Email,
 		Username:  user.Username,
 		Password:  user.Password,
-		Role:      string(user.Role), // Преобразуем enum.Role в string
+		Role:      string(user.Role),
 		Bio:       user.Bio,
 		Banned:    user.Banned,
 		CreatedAt: user.CreatedAt,

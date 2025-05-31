@@ -32,8 +32,6 @@ func (u *likeUsecaseImpl) LikePost(ctx context.Context, like *entity.Like) (int3
 	if err != nil {
 		return 0, err
 	}
-
-	// Publish notification
 	_ = u.contentPublisher.PublishPostLiked(payloads.PostLiked{
 		UserID: like.UserID,
 		PostID: like.PostID,
