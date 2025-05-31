@@ -14,13 +14,12 @@ import (
 	pb "github.com/KaminurOrynbek/BiznesAsh/UserService/auto-proto/user"
 	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/nats/publisher"
 	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/postgres/dao"
+	"github.com/KaminurOrynbek/BiznesAsh/UserService/pkg/queue"
+	natscfg "github.com/KaminurOrynbek/BiznesAsh/UserService/internal/configs/nats"
+	posgres "github.com/KaminurOrynbek/BiznesAsh/UserService/internal/configs/posgres"
 	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/delivery/grpc"
 	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/middleware"
 	usecase "github.com/KaminurOrynbek/BiznesAsh/UserService/internal/usecase/Impl"
-	"github.com/KaminurOrynbek/BiznesAsh_lib/adapter/nats"
-	natscfg "github.com/KaminurOrynbek/BiznesAsh_lib/config/nats"
-	postgresCfg "github.com/KaminurOrynbek/BiznesAsh_lib/config/postgres"
-	"github.com/KaminurOrynbek/BiznesAsh_lib/queue"
 )
 
 func main() {
