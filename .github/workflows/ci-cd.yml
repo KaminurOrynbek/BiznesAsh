@@ -19,11 +19,18 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [apigateway, userservice, contentservice, notificationservice]
+        service: [APIGateway, UserService, ContentService, NotificationService]
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Debug directory structure
+        run: |
+          pwd
+          ls -la
+          echo "Checking ${{ matrix.service }} directory:"
+          ls -la ${{ matrix.service }} || echo "Directory not found"
 
       - name: Set up Go
         uses: actions/setup-go@v4
