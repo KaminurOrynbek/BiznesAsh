@@ -38,13 +38,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and test ${{ matrix.service }}
-        working-directory: ./${{ matrix.service }}
+        working-directory: ${{ matrix.service }}
         run: |
           go mod download
           go test ./...
 
       - name: Build Docker image
-        working-directory: ./${{ matrix.service }}
+        working-directory: ${{ matrix.service }}
         run: |
           docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.service }}:${{ github.sha }} .
           docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.service }}:${{ github.sha }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.service }}:latest
