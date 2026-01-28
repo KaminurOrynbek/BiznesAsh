@@ -3,8 +3,8 @@ package postgres
 import (
 	"context"
 	"fmt"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/entity"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/usecase/interface"
 	"github.com/KaminurOrynbek/BiznesAsh_lib/config/service"
 	"net/smtp"
 )

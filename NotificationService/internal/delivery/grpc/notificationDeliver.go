@@ -3,9 +3,9 @@ package grpc
 import (
 	"context"
 
-	pb "github.com/KaminurOrynbek/BiznesAsh/auto-proto/notification"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
-	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
+	pb "github.com/KaminurOrynbek/BiznesAsh/NotificationService/auto-proto/notification"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/entity"
+	_interface "github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/usecase/interface"
 )
 
 type NotificationDelivery struct {

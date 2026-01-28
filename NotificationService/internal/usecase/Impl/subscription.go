@@ -2,7 +2,7 @@ package impl
 
 import (
 	"context"
-	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/repository/interface"
+	_interface "github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/repository/interface"
 )
 
 type subscriptionUsecase struct {

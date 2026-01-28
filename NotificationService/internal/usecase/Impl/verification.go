@@ -6,9 +6,9 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
-	repo "github.com/KaminurOrynbek/BiznesAsh/internal/repository/interface"
-	usecase "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/entity"
+	repo "github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/repository/interface"
+	usecase "github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/usecase/interface"
 )
 
 type verificationUsecaseImpl struct {

@@ -2,10 +2,10 @@ package impl
 
 import (
 	"context"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/dao"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/model"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
-	repo "github.com/KaminurOrynbek/BiznesAsh/internal/repository/interface"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/adapter/postgres/dao"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/adapter/postgres/model"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/entity"
+	repo "github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/repository/interface"
 )
 
 type notificationRepositoryImpl struct {

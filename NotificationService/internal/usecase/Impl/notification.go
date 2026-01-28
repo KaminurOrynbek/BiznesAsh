@@ -3,9 +3,9 @@ package impl
 import (
 	"context"
 	"fmt"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
-	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/repository/interface"
-	usecase "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/entity"
+	_interface "github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/repository/interface"
+	usecase "github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/usecase/interface"
 	"github.com/google/uuid"
 	"time"
 )

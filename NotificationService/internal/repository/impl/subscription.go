@@ -2,9 +2,9 @@ package impl
 
 import (
 	"context"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/dao"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/model"
-	repo "github.com/KaminurOrynbek/BiznesAsh/internal/repository/interface"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/adapter/postgres/dao"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/adapter/postgres/model"
+	repo "github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/repository/interface"
 )
 
 type subscriptionRepositoryImpl struct {
