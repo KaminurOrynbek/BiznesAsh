@@ -24,4 +24,4 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250218202821-56aae31c358a // indirect
 )
 
-replace github.com/KaminurOrynbek/BiznesAsh => ../
+replace github.com/KaminurOrynbek/BiznesAsh => ..
