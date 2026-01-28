@@ -2,11 +2,11 @@ package impl
 
 import (
 	"context"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats/payloads"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats/publisher"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
-	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/repository/interface"
-	usecase "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
+	"github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/adapter/nats/payloads"
+	"github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/adapter/nats/publisher"
+	"github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/entity"
+	_interface "github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/repository/interface"
+	usecase "github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/usecase/interface"
 	"github.com/google/uuid"
 	"time"
 )

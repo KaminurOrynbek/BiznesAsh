@@ -1,8 +1,8 @@
 package mapper
 
 import (
-	pb "github.com/KaminurOrynbek/BiznesAsh/auto-proto/content"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
+	pb "github.com/KaminurOrynbek/BiznesAsh/ContentService/auto-proto/content"
+	"github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/entity"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
