@@ -1,4 +1,4 @@
-module github.com/KaminurOrynbek/BiznesAsh
+module github.com/KaminurOrynbek/BiznesAsh/NotificationService
 
 go 1.24.1
 
@@ -23,5 +23,3 @@ require (
 	golang.org/x/text v0.24.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250218202821-56aae31c358a // indirect
 )
-
-replace github.com/KaminurOrynbek/BiznesAsh => ..

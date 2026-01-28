@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats/subscriber"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/dao"
-	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/adapter/nats/subscriber"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/adapter/postgres/dao"
+	_interface "github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/usecase/interface"
 	"github.com/KaminurOrynbek/BiznesAsh_lib/adapter/nats"
 	natscfg "github.com/KaminurOrynbek/BiznesAsh_lib/config/nats"
 	postgresCfg "github.com/KaminurOrynbek/BiznesAsh_lib/config/postgres"
@@ -16,11 +16,11 @@ import (
 	"net"
 	"os"
 
-	pb "github.com/KaminurOrynbek/BiznesAsh/auto-proto/notification"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres"
-	delivery "github.com/KaminurOrynbek/BiznesAsh/internal/delivery/grpc"
-	repo "github.com/KaminurOrynbek/BiznesAsh/internal/repository/impl"
-	usecaseImpl "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/impl"
+	pb "github.com/KaminurOrynbek/BiznesAsh/NotificationService/auto-proto/notification"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/adapter/postgres"
+	delivery "github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/delivery/grpc"
+	repo "github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/repository/impl"
+	usecaseImpl "github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/usecase/impl"
 
 	"github.com/KaminurOrynbek/BiznesAsh_lib/queue"
 )

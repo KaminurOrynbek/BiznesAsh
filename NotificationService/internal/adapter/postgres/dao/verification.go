@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/model"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/adapter/postgres/model"
 	"github.com/jmoiron/sqlx"
 )
 

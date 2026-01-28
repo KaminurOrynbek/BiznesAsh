@@ -2,18 +2,18 @@ package subscriber
 
 import (
 	"encoding/json"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats/payloads"
-	usecase "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/adapter/nats/payloads"
+	usecase "github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/usecase/interface"
 	"github.com/KaminurOrynbek/BiznesAsh_lib/queue"
 	"log"
 
 	"context"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/entity"
 )
 
 type ContentSubscriber struct {
 	queue               queue.MessageQueue
-	notificationUsecase usecase.NotificationUsecase 
+	notificationUsecase usecase.NotificationUsecase
 }
 
 func NewContentSubscriber(q queue.MessageQueue, ns usecase.NotificationUsecase) *ContentSubscriber {

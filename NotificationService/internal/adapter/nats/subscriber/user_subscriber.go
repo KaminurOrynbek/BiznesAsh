@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats/payloads"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/adapter/nats/payloads"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/entity"
+	"github.com/KaminurOrynbek/BiznesAsh/NotificationService/internal/usecase/interface"
 	"github.com/KaminurOrynbek/BiznesAsh_lib/queue"
 )
 
@@ -31,7 +31,7 @@ func InitUserSubscribers(q queue.MessageQueue, uc _interface.CombinedUsecase) {
 		_ = uc.SendVerificationEmail(ctx, &entity.Email{
 			To:      payload.Email,
 			Subject: "Please verify your email",
-			Body:    "Welcome! Your verification code will arrive shortly.", 
+			Body:    "Welcome! Your verification code will arrive shortly.",
 		})
 		_ = uc.SendEmail(ctx, &entity.Email{
 			To:      payload.Email,
