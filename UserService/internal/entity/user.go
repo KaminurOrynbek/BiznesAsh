@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/entity/enum"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/entity/enum"
 	"time"
 )
 

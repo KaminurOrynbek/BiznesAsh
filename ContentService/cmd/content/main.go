@@ -2,31 +2,33 @@ package main
 
 import (
 	"context"
+
 	"github.com/KaminurOrynbek/BiznesAsh_lib/adapter/nats"
 	natscfg "github.com/KaminurOrynbek/BiznesAsh_lib/config/nats"
 	"github.com/KaminurOrynbek/BiznesAsh_lib/queue"
 
-	"github.com/jmoiron/sqlx"
-	"github.com/joho/godotenv"
 	"log"
 	"net"
 	"os"
 
+	"github.com/jmoiron/sqlx"
+	"github.com/joho/godotenv"
+
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 
-	"github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/adapter/nats/publisher"
-	"github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/adapter/postgres/dao"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats/publisher"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/dao"
 	"github.com/KaminurOrynbek/BiznesAsh_lib/config/postgres"
 
 	redisclient "github.com/KaminurOrynbek/BiznesAsh_lib/adapter/redis"
 	rediscfg "github.com/KaminurOrynbek/BiznesAsh_lib/config/redis"
 
-	repoimpl "github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/repository/Impl"
-	usecaseimpl "github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/usecase/impl"
+	repoimpl "github.com/KaminurOrynbek/BiznesAsh/internal/repository/Impl"
+	usecaseimpl "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/impl"
 
-	pb "github.com/KaminurOrynbek/BiznesAsh/ContentService/auto-proto/content"
-	handler "github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/delivery/grpc"
+	pb "github.com/KaminurOrynbek/BiznesAsh/auto-proto/content"
+	handler "github.com/KaminurOrynbek/BiznesAsh/internal/delivery/grpc"
 )
 
 func init() {

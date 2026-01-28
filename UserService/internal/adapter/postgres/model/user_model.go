@@ -3,8 +3,8 @@ package model
 import (
 	"time"
 
-	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/entity"
-	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/entity/enum"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/entity/enum"
 )
 
 // UserDTO используется для маппинга данных с базой данных

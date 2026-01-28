@@ -3,8 +3,8 @@ package dao
 import (
 	"context"
 	"fmt"
-	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/postgres/model"
-	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/entity"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/model"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
 )

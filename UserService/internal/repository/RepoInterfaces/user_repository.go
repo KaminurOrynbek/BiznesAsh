@@ -2,7 +2,7 @@ package RepoInterfaces
 
 import (
 	"context"
-	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/entity"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
 )
 
 // UserFilter contains filtering options for listing users

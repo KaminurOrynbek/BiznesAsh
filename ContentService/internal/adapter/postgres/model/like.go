@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/entity"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
 	"github.com/google/uuid"
 	"time"
 )

@@ -2,7 +2,7 @@ package _interface
 
 import (
 	"context"
-	"github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/entity"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
 )
 
 type CommentRepository interface {

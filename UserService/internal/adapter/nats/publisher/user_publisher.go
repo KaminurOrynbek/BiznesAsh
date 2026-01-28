@@ -2,7 +2,7 @@ package publisher
 
 import (
 	"encoding/json"
-	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/nats/payloads"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats/payloads"
 	"github.com/KaminurOrynbek/BiznesAsh_lib/queue"
 	"log"
 )

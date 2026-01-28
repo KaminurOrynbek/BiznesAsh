@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/adapter/nats/payloads"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats/payloads"
 	"github.com/KaminurOrynbek/BiznesAsh_lib/queue"
 )
 

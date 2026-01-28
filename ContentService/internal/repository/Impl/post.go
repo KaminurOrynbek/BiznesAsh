@@ -2,10 +2,10 @@ package Impl
 
 import (
 	"context"
-	"github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/adapter/postgres/dao"
-	"github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/adapter/postgres/model"
-	"github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/entity"
-	_interface "github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/repository/interface"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/dao"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/model"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
+	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/repository/interface"
 )
 
 type postRepositoryImpl struct {

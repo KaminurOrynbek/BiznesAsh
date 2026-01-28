@@ -2,16 +2,16 @@ package usecase
 
 import (
 	"context"
-	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/nats/payloads"
-	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/adapter/nats/publisher"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats/payloads"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/nats/publisher"
 	"log"
 	"os"
 	"time"
 
-	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/entity"
-	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/entity/enum"
-	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/repository/RepoInterfaces"
-	"github.com/KaminurOrynbek/BiznesAsh/UserService/internal/usecase/Usecase_Interfaces"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/entity/enum"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/repository/RepoInterfaces"
+	"github.com/KaminurOrynbek/BiznesAsh/internal/usecase/Usecase_Interfaces"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
