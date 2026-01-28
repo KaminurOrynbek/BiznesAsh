@@ -3,8 +3,8 @@ package mapper
 import (
 	"time"
 
-	pb "github.com/KaminurOrynbek/BiznesAsh/auto-proto/content"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
+	pb "github.com/KaminurOrynbek/BiznesAsh/ContentService/auto-proto/content"
+	"github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/entity"
 )
 
 func ConvertPostToPB(p *entity.Post) *pb.Post {

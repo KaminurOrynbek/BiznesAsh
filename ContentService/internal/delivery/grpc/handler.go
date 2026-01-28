@@ -6,11 +6,11 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 
-	pb "github.com/KaminurOrynbek/BiznesAsh/auto-proto/content"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/delivery/mapper"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/entity"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/entity/enum"
-	_interface "github.com/KaminurOrynbek/BiznesAsh/internal/usecase/interface"
+	pb "github.com/KaminurOrynbek/BiznesAsh/ContentService/auto-proto/content"
+	"github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/delivery/mapper"
+	"github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/entity"
+	"github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/entity/enum"
+	_interface "github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/usecase/interface"
 )
 
 type ContentHandler struct {

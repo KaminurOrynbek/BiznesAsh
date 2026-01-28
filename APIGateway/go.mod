@@ -1,4 +1,4 @@
-module github.com/KaminurOrynbek/BiznesAsh
+module github.com/KaminurOrynbek/BiznesAsh/APIGateway
 
 go 1.24.1
 

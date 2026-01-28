@@ -2,7 +2,7 @@ package dao
 
 import (
 	"context"
-	"github.com/KaminurOrynbek/BiznesAsh/internal/adapter/postgres/model"
+	"github.com/KaminurOrynbek/BiznesAsh/ContentService/internal/adapter/postgres/model"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -51,7 +51,6 @@ func (dao *LikeDAO) CountLikes(ctx context.Context, postID string) (int32, error
 	err := dao.db.GetContext(ctx, &count, query, postID)
 	return count, err
 }
-
 
 func (dao *LikeDAO) CountDislikes(ctx context.Context, postID string) (int32, error) {
 	query := `
